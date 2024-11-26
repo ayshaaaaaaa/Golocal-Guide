@@ -1,77 +1,131 @@
+// components/Navbar.js
 import React, { useState } from 'react';
-import { Menu, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Menu, X, MapPin, User, LogIn } from 'lucide-react';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
 
+  const menuItems = [
+    { title: 'Home', href: '/' },
+    { title: 'Destinations', href: '/destinations' },
+    { title: 'Services', href: '/services' },
+    { title: 'About Us', href: '/about' },
+    { title: 'Contact', href: '/contact' },
+  ];
+
   return (
-    <nav className="bg-gradient-to-r from-emerald-50 to-green-50 shadow-md">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
-          <div className="flex">
-            <Link to="/" className="flex-shrink-0 flex items-center">
-              <span className="text-2xl font-bold text-emerald-700">GoLocal Guide</span>
-            </Link>
+    <nav className="fixed w-full bg-white/95 backdrop-blur-md z-50 shadow-sm">
+      <div className="container mx-auto px-6">
+        <div className="flex items-center justify-between h-20">
+          {/* Logo */}
+          <motion.a
+            href="/"
+            className="flex items-center space-x-2"
+            whileHover={{ scale: 1.02 }}
+          >
+            <MapPin className="w-9 h-9 text-emerald-600" />
+            <span className="text-3xl font-semibold text-emerald-600">GoLocal Guide</span>
+          </motion.a>
+
+          {/* Desktop Menu */}
+          <div className="hidden lg:flex items-center space-x-12">
+            {menuItems.map((item) => (
+              <motion.a
+                key={item.title}
+                href={item.href}
+                className="relative text-xl font-medium text-gray-600 hover:text-emerald-600 transition-colors"
+                whileHover={{ y: -2 }}
+              >
+                {item.title}
+                <motion.span
+                  className="absolute bottom-0 left-0 w-full h-0.5 bg-emerald-600 origin-left"
+                  initial={{ scaleX: 0 }}
+                  whileHover={{ scaleX: 1 }}
+                  transition={{ duration: 0.2 }}
+                />
+              </motion.a>
+            ))}
           </div>
-          
-          <div className="hidden sm:ml-6 sm:flex sm:space-x-8">
-            <Link to="/tours" className="text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium">
-              Tours
-            </Link>
-            <Link to="/guides" className="text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium">
-              Guides
-            </Link>
-            <Link to="/about" className="text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium">
-              About
-            </Link>
-          </div>
-          
-          <div className="hidden sm:ml-6 sm:flex sm:items-center">
-            <Link to="/login" className="text-gray-700 hover:text-emerald-700 hover:bg-emerald-50 px-3 py-2 rounded-md text-sm font-medium">
-              Login
-            </Link>
-            <Link to="/signup" className="ml-4 inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-emerald-600 hover:bg-emerald-700 transition duration-150 ease-in-out transform hover:-translate-y-0.5">
-              Sign Up
-            </Link>
-          </div>
-          
-          <div className="-mr-2 flex items-center sm:hidden">
-            <button
-              onClick={() => setIsOpen(!isOpen)}
-              className="inline-flex items-center justify-center p-2 rounded-md text-gray-400 hover:text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-emerald-500"
+
+          {/* Auth Buttons */}
+          <div className="hidden lg:flex items-center space-x-6">
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="/login"
+              className="flex items-center space-x-2 text-xl font-medium text-emerald-600 hover:text-emerald-700"
             >
-              <span className="sr-only">Open main menu</span>
-              {isOpen ? <X className="block h-6 w-6" /> : <Menu className="block h-6 w-6" />}
-            </button>
+              <LogIn className="w-5 h-5" />
+              <span>Login</span>
+            </motion.a>
+            <motion.a
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              href="/signup"
+              className="flex items-center space-x-2 bg-emerald-600 text-white px-6 py-3 rounded-full hover:bg-emerald-700 transition-colors text-lg font-medium"
+            >
+              <User className="w-5 h-5" />
+              <span>Sign Up</span>
+            </motion.a>
           </div>
+
+          {/* Mobile Menu Button */}
+          <motion.button
+            whileTap={{ scale: 0.95 }}
+            className="lg:hidden text-gray-600 p-2"
+            onClick={() => setIsOpen(!isOpen)}
+          >
+            {isOpen ? <X className="w-9 h-9" /> : <Menu className="w-9 h-9" />}
+          </motion.button>
         </div>
       </div>
 
-      {isOpen && (
-        <div className="sm:hidden">
-          <div className="pt-2 pb-3 space-y-1">
-            <Link to="/tours" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-700 hover:bg-emerald-50">
-              Tours
-            </Link>
-            <Link to="/guides" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-700 hover:bg-emerald-50">
-              Guides
-            </Link>
-            <Link to="/about" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-700 hover:bg-emerald-50">
-              About
-            </Link>
-            <Link to="/login" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-700 hover:bg-emerald-50">
-              Login
-            </Link>
-            <Link to="/signup" className="block px-3 py-2 rounded-md text-base font-medium text-gray-700 hover:text-emerald-700 hover:bg-emerald-50">
-              Sign Up
-            </Link>
-          </div>
-        </div>
-      )}
+      {/* Mobile Menu */}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2 }}
+            className="lg:hidden bg-white border-t"
+          >
+            <div className="container mx-auto px-6 py-6 space-y-8">
+              {menuItems.map((item) => (
+                <motion.a
+                  key={item.title}
+                  href={item.href}
+                  className="block text-2xl font-medium text-gray-600 hover:text-emerald-600 transition-colors"
+                  whileHover={{ x: 10 }}
+                >
+                  {item.title}
+                </motion.a>
+              ))}
+              <div className="flex flex-col space-y-4 pt-6 border-t">
+                <motion.a
+                  whileHover={{ x: 10 }}
+                  href="/login"
+                  className="flex items-center space-x-2 text-xl font-medium text-emerald-600 hover:text-emerald-700"
+                >
+                  <LogIn className="w-6 h-6" />
+                  <span>Login</span>
+                </motion.a>
+                <motion.a
+                  whileHover={{ x: 10 }}
+                  href="/signup"
+                  className="flex items-center justify-center space-x-2 bg-emerald-600 text-white px-6 py-3 rounded-full hover:bg-emerald-700 transition-colors text-xl font-medium"
+                >
+                  <User className="w-6 h-6" />
+                  <span>Sign Up</span>
+                </motion.a>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </nav>
   );
 };
 
 export default Navbar;
-
