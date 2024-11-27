@@ -97,7 +97,6 @@ const Signup = () => {
       case 'experience':
         error = validateYears(value);
         break;
-      // Add more cases for other fields as needed
     }
     
     setFormErrors((prev) => ({
