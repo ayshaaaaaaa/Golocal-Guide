@@ -27,34 +27,37 @@ const UserTypes = () => {
   const [activeType, setActiveType] = useState(0);
 
   return (
-    <section className="py-16 md:py-24">
-      <div className="container mx-auto px-4">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+    <section className="py-12 sm:py-16 lg:py-18">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-10 lg:gap-16 items-center">
           {/* Left Side - Heading and User Types List */}
-          <div className="space-y-8 md:space-y-10">
-            <h2 className="text-3xl md:text-4xl lg:text-5xl font-medium text-gray-700">
+          <div className="space-y-6 sm:space-y-8">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-medium text-gray-700">
               Who It's For
             </h2>
-            <div className="space-y-6 md:space-y-8">
+            <div className="space-y-4 sm:space-y-6">
               {userTypes.map((type, index) => (
                 <motion.div
                   key={index}
-                  className={`group flex items-center space-x-4 md:space-x-6 cursor-pointer py-3 px-4 md:py-4 md:px-6 rounded-2xl transition-all duration-300 hover:bg-white hover:shadow-lg ${
-                    activeType === index ? 'bg-white shadow-lg' : ''
+                  className={`group flex items-center space-x-3 sm:space-x-4 cursor-pointer 
+                    py-2 px-3 sm:py-3 sm:px-4 rounded-xl sm:rounded-2xl 
+                    transition-all duration-300 
+                    hover:bg-white hover:shadow-md ${
+                    activeType === index ? 'bg-white shadow-md' : ''
                   }`}
                   onClick={() => setActiveType(index)}
                   whileHover={{ x: 10 }}
                   initial={false}
                 >
                   <motion.div
-                    className={`p-2 md:p-3 rounded-full transition-colors duration-300 ${
+                    className={`p-1.5 sm:p-2 rounded-full transition-colors duration-300 ${
                       activeType === index
                         ? 'bg-teal-50'
                         : 'bg-gray-50 group-hover:bg-teal-50'
                     }`}
                   >
                     <type.icon
-                      className={`w-5 h-5 md:w-6 md:h-6 transition-colors duration-300 ${
+                      className={`w-4 h-4 sm:w-5 sm:h-5 transition-colors duration-300 ${
                         activeType === index
                           ? 'text-emerald-500'
                           : 'text-gray-400 group-hover:text-emerald-500'
@@ -63,7 +66,7 @@ const UserTypes = () => {
                   </motion.div>
                   <div className="flex-1">
                     <h3
-                      className={`text-lg md:text-xl font-medium transition-colors duration-300 ${
+                      className={`text-base sm:text-lg font-medium transition-colors duration-300 ${
                         activeType === index
                           ? 'text-emerald-500'
                           : 'text-gray-500 group-hover:text-emerald-500'
@@ -80,7 +83,7 @@ const UserTypes = () => {
                     transition={{ duration: 0.2 }}
                   >
                     <ArrowRight
-                      className={`w-4 h-4 md:w-5 md:h-5 transition-colors duration-300 ${
+                      className={`w-3.5 h-3.5 sm:w-4 sm:h-4 transition-colors duration-300 ${
                         activeType === index
                           ? 'text-emerald-500'
                           : 'text-gray-400'
@@ -98,11 +101,11 @@ const UserTypes = () => {
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
-            className="bg-white rounded-2xl lg:rounded-3xl overflow-hidden shadow-lg"
+            className="bg- rounded-xl sm:rounded-2xl lg:rounded-3xl overflow-hidden shadow-md hover:shadow-lg transition-shadow"
           >
             <motion.div
               layoutId="image-container"
-              className="relative h-[250px] md:h-[300px] lg:h-[400px] overflow-hidden"
+              className="relative h-[200px] sm:h-[250px] md:h-[300px] lg:h-[350px] overflow-hidden"
             >
               <motion.img
                 src={userTypes[activeType].image}
@@ -112,12 +115,12 @@ const UserTypes = () => {
               />
             </motion.div>
             <motion.div
-              className="p-6 md:p-8"
+              className="p-2 sm:p-3 lg:p-4"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              <p className="text-base md:text-lg lg:text-xl text-gray-500 leading-relaxed">
+              <p className="text-sm sm:text-base lg:text-lg text-gray-500 leading-relaxed">
                 {userTypes[activeType].description}
               </p>
             </motion.div>

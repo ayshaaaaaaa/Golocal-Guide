@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { motion } from "framer-motion"
-import { Lock, Mail } from 'lucide-react'
+import { Lock, Mail, Eye, EyeOff } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useNavigate, Link } from 'react-router-dom'
 
@@ -13,6 +13,7 @@ const Login = () => {
     password: ''
   })
   const [formError, setFormError] = useState(null)
+  const [showPassword, setShowPassword] = useState(false)
 
   const handleInputChange = (e) => {
     const { name, value } = e.target
@@ -29,8 +30,10 @@ const Login = () => {
       const result = await googleAuth();
       if (result.needsProfileCompletion) {
         navigate('/signup?google=true', { state: { partialUser: result.partialUser } });
+      } else if (result.user && result.user.role) {
+        navigate(getDashboardRoute(result.user.role));
       } else {
-        navigate(getDashboardRoute(result.role));
+        setFormError('Unable to determine user role. Please try again or contact support.');
       }
     } catch (error) {
       console.error('Google login error:', error);
@@ -53,10 +56,14 @@ const Login = () => {
         return;
       }
       const user = await login(formData.email, formData.password);
-      navigate(getDashboardRoute(user.role));
+      if (user && user.role) {
+        navigate(getDashboardRoute(user.role));
+      } else {
+        setFormError('Unable to determine user role. Please try again or contact support.');
+      }
     } catch (error) {
       console.error('Login error:', error);
-      setFormError(error.message || 'Invalid email or password');
+      setFormError('Invalid email or password');
     } finally {
       setIsLoading(false);
     }
@@ -78,23 +85,23 @@ const Login = () => {
   return (
     <div className="min-h-screen w-full flex flex-col lg:flex-row bg-white">
       {/* Content Container */}
-      <div className="relative z-10 flex flex-col lg:flex-row w-full min-h-screen">
+      <div className="relative z-10 flex flex-col lg:flex-row w-full">
         {/* Left Section - Login Form */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-full lg:w-[35%] min-h-screen p-6 sm:p-8 md:p-10 lg:p-12 flex items-center justify-center"
+          className="w-full lg:w-[40%] xl:w-[35%] min-h-screen p-4 sm:p-6 md:p-8 lg:p-10 xl:p-12 flex items-center justify-center"
         >
-          <div className="w-full max-w-md mx-auto bg-white rounded-3xl shadow-xl p-6 sm:p-8 md:p-10 space-y-6 sm:space-y-8">
+          <div className="w-full max-w-md mx-auto bg-white rounded-3xl shadow-xl p-4 sm:p-6 md:p-8 lg:p-10 space-y-4 sm:space-y-6">
             <motion.div
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
               className="text-center space-y-2 sm:space-y-3"
             >
-              <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-emerald-800">Welcome Back</h1>
-              <p className="text-emerald-600 text-base sm:text-lg lg:text-xl">Log in to your account</p>
+              <h1 className="text-2xl sm:text-3xl md:text-4xl lg:text-4xl font-bold text-emerald-800">Welcome Back</h1>
+              <p className="text-sm sm:text-base md:text-lg lg:text-xl text-emerald-600">Log in to your account</p>
             </motion.div>
 
             <motion.button
@@ -102,9 +109,9 @@ const Login = () => {
               whileTap={{ scale: 0.98 }}
               onClick={handleGoogleLogin}
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-2 sm:gap-4 bg-white border-2 border-emerald-200 rounded-full py-2 sm:py-3 lg:py-4 px-4 sm:px-6 text-emerald-700 hover:bg-emerald-50 transition duration-300 text-base sm:text-lg lg:text-xl font-medium"
+              className="w-full flex items-center justify-center gap-2 sm:gap-3 bg-white border-2 border-emerald-200 rounded-full py-2 sm:py-2.5 md:py-3 px-3 sm:px-4 text-emerald-700 hover:bg-emerald-50 transition duration-300 text-sm sm:text-base md:text-lg font-medium"
             >
-              <img src="/images/google.png" alt="Google" className="w-6 h-6" />
+              <img src="/images/google.png" alt="Google" className="w-5 h-5 sm:w-6 sm:h-6" />
               Continue with Google
             </motion.button>
 
@@ -113,40 +120,47 @@ const Login = () => {
                 <div className="w-full border-t-2 border-emerald-200"></div>
               </div>
               <div className="relative flex justify-center">
-                <span className="px-4 sm:px-6 bg-white text-emerald-700 text-sm sm:text-base lg:text-lg">Or continue with email</span>
+                <span className="px-3 sm:px-4 bg-white text-emerald-700 text-xs sm:text-sm md:text-base">Or continue with email</span>
               </div>
             </div>
 
             {formError && (
-              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+              <div className="bg-red-100 border border-red-400 text-red-700 px-3 sm:px-4 py-2 sm:py-3 rounded relative" role="alert">
                 <strong className="font-bold">Error: </strong>
                 <span className="block sm:inline">{formError}</span>
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-3 sm:space-y-4">
               <div className="relative">
-                <Mail className="absolute left-3 sm:left-4 top-3 sm:top-3.5 text-emerald-700 h-4 sm:h-5 w-4 sm:w-5" />
+                <Mail className="absolute left-2.5 sm:left-3.5 top-2.5 sm:top-3.5 text-emerald-700 h-4 w-4 sm:h-5 sm:w-5" />
                 <input
                   type="email"
                   name="email"
                   placeholder="Email Address"
                   required
                   onChange={handleInputChange}
-                  className="w-full bg-white border-2 border-emerald-200 rounded-full py-2 sm:py-3 pl-10 sm:pl-12 pr-4 text-emerald-700 placeholder-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm sm:text-base lg:text-lg"
+                  className="w-full bg-white border-2 border-emerald-200 rounded-full py-2 sm:py-2.5 pl-8 sm:pl-12 pr-3 sm:pr-4 text-emerald-700 placeholder-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-xs sm:text-sm md:text-base"
                 />
               </div>
 
               <div className="relative">
-                <Lock className="absolute left-3 sm:left-4 top-3 sm:top-3.5 text-emerald-700 h-4 sm:h-5 w-4 sm:w-5" />
+                <Lock className="absolute left-2.5 sm:left-3.5 top-2.5 sm:top-3.5 text-emerald-700 h-4 w-4 sm:h-5 sm:w-5" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   name="password"
                   placeholder="Password"
                   required
                   onChange={handleInputChange}
-                  className="w-full bg-white border-2 border-emerald-200 rounded-full py-2 sm:py-3 pl-10 sm:pl-12 pr-4 text-emerald-700 placeholder-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-sm sm:text-base lg:text-lg"
+                  className="w-full bg-white border-2 border-emerald-200 rounded-full py-2 sm:py-2.5 pl-8 sm:pl-12 pr-10 sm:pr-12 text-emerald-700 placeholder-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:bg-white text-xs sm:text-sm md:text-base"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2.5 sm:right-3.5 top-2.5 sm:top-3.5 text-emerald-700"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4 sm:h-5 sm:w-5" /> : <Eye className="h-4 w-4 sm:h-5 sm:w-5" />}
+                </button>
               </div>
 
               <motion.button
@@ -154,13 +168,13 @@ const Login = () => {
                 whileTap={{ scale: 0.98 }}
                 disabled={isLoading}
                 type="submit"
-                className="w-full bg-emerald-600 text-white py-2 sm:py-3 lg:py-4 rounded-full text-base sm:text-lg lg:text-xl font-semibold hover:bg-emerald-700 transition duration-300 disabled:opacity-50"
+                className="w-full bg-emerald-600 text-white py-2 sm:py-2.5 md:py-3 rounded-full text-sm sm:text-base md:text-lg font-semibold hover:bg-emerald-700 transition duration-300 disabled:opacity-50"
               >
                 {isLoading ? "Logging in..." : "Log In"}
               </motion.button>
             </form>
 
-            <p className="text-center text-emerald-600 text-sm sm:text-base lg:text-lg">
+            <p className="text-center text-emerald-600 text-xs sm:text-sm md:text-base">
               Don't have an account?{" "}
               <Link to="/signup" className="text-emerald-800 font-semibold hover:underline">
                 Sign Up
@@ -174,7 +188,7 @@ const Login = () => {
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8 }}
-          className="w-full lg:w-[65%] relative bg-white"
+          className="w-full lg:w-[60%] xl:w-[65%] relative bg-white"
           style={{ minHeight: '100vh' }}
         >
           <div className="absolute inset-0 lg:rounded-l-[3rem] overflow-hidden">
@@ -196,7 +210,7 @@ const Login = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.3 }}
-                className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold mb-4 sm:mb-6"
+                className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-bold mb-3 sm:mb-4 md:mb-6"
               >
                 Welcome Back Explorer
               </motion.h2>
@@ -204,7 +218,7 @@ const Login = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.5 }}
-                className="text-lg sm:text-xl md:text-2xl lg:text-3xl text-gray-200"
+                className="text-sm sm:text-base md:text-lg lg:text-xl xl:text-2xl text-gray-200"
               >
                 Your next adventure awaits. Log in to continue your journey!
               </motion.p>
@@ -217,3 +231,4 @@ const Login = () => {
 }
 
 export default Login
+
