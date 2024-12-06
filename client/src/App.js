@@ -7,6 +7,7 @@ import LoginPage from './pages/LoginPage';
 import TouristDashboard from './pages/tourist/TouristDashboard';
 import GuideDashboard from './pages/guide/GuideDashboard';
 import BusinessDashboard from './pages/business/BusinessDashboard';
+import Discover from './pages/tourist/DiscoverPage';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -29,13 +30,21 @@ function AppRoutes() {
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route 
-        path="/tourist-dashboard" 
+        path="/tourist-dashboard"
         element={
           <ProtectedRoute allowedRoles={['Tourist']}>
             <TouristDashboard />
           </ProtectedRoute>
         } 
       />
+      <Route 
+          path="/discover" 
+          element={
+            <ProtectedRoute allowedRoles={['Tourist']}>
+              <Discover />
+            </ProtectedRoute>
+          } 
+        />
       <Route 
         path="/guide-dashboard" 
         element={
