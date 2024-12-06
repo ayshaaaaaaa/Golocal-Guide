@@ -1,13 +1,30 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import { GuideProvider } from './context/GuideContext'; // Added GuideProvider for shared data
+
+// Pages and Components
 import HomePage from './pages/HomePage';
 import SignupPage from './pages/SignupPage';
 import LoginPage from './pages/LoginPage';
+
 import TouristDashboard from './pages/tourist/TouristDashboard';
 import GuideDashboard from './pages/guide/GuideDashboard';
 import BusinessDashboard from './pages/business/BusinessDashboard';
 import Discover from './pages/tourist/DiscoverPage';
+
+import GuideProfile from './pages/guide/GuideProfile'; // Guide Profile Page
+import MyPackagesPage from './pages/guide/MyPackagesPage'; // My Packages Page
+import AddPackageForm from './components/guide/Packages/AddPackageForm'; // Add Package Form
+import PackageCard from './components/guide/Packages/PackageCard'; // Package Card
+
+import TourRequests from './pages/guide/TourRequests'; // Tour Requests Page
+import AcceptedRequests from './pages/guide/AcceptedRequests'; // Accepted Requests Page
+import ChatBox from './components/guide/TourRequests/ChatBox'; // Chatbox Component for messages
+
+// New Experience Pages and Components
+import GuideExperiencePage from './pages/guide/ExperiencesPage'; // Experience Page
+import AddExperienceForm from './components/guide/Experiences/AddExperienceForm'; // Add Experience Form
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -26,10 +43,13 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 function AppRoutes() {
   return (
     <Routes>
+      {/* Public Routes */}
       <Route path="/" element={<HomePage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
-      <Route 
+
+      {/* Tourist Routes */}
+     <Route 
         path="/tourist-dashboard"
         element={
           <ProtectedRoute allowedRoles={['Tourist']}>
@@ -37,6 +57,8 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+
+      {/* Guide Routes */}
       <Route 
           path="/discover" 
           element={
@@ -47,38 +69,93 @@ function AppRoutes() {
         />
       <Route 
         path="/guide-dashboard" 
-        element={
+        element={(
           <ProtectedRoute allowedRoles={['Guide']}>
             <GuideDashboard />
           </ProtectedRoute>
-        } 
+        )} 
       />
       <Route 
-        path="/business-dashboard" 
-        element={
-          <ProtectedRoute allowedRoles={['Business Owner']}>
-            <BusinessDashboard />
+        path="/profile" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <GuideProfile />
           </ProtectedRoute>
-        } 
+        )} 
       />
+      <Route 
+        path="/my-packages" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <MyPackagesPage />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route 
+        path="/add-package" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <AddPackageForm />
+          </ProtectedRoute>
+        )} 
+      />
+
+      {/* Tour Requests Routes */}
+      <Route 
+        path="/tour-requests" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <TourRequests />
+          </ProtectedRoute>
+        )} 
+      />
+
+      {/* Accepted Requests Route */}
+      <Route 
+        path="/accepted-requests/:id" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide', 'Tourist']}>
+            <AcceptedRequests />
+          </ProtectedRoute>
+        )} 
+      />
+
+      {/* Chatbox Route */}
+      <Route 
+        path="/chat/:id" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide', 'Tourist']}>
+            <ChatBox />
+          </ProtectedRoute>
+        )} 
+      />
+
+      {/* Guide Experience Routes */}
+      <Route 
+        path="/experiences" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <GuideExperiencePage />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route 
+        path="/add-experience" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <AddExperienceForm />
+          </ProtectedRoute>
+        )} 
+      />
+
+      {/* Redirect Based on Role */}
       <Route 
         path="/dashboard" 
-        element={
+        element={(
           <ProtectedRoute>
-            {({ user }) => {
-              switch (user.role) {
-                case 'Tourist':
-                  return <Navigate to="/tourist-dashboard" replace />;
-                case 'Guide':
-                  return <Navigate to="/guide-dashboard" replace />;
-                case 'Business Owner':
-                  return <Navigate to="/business-dashboard" replace />;
-                default:
-                  return <Navigate to="/" replace />;
-              }
-            }}
+            <Navigate to="/guide-dashboard" /> {/* Default redirect to guide dashboard */}
           </ProtectedRoute>
-        } 
+        )}
       />
     </Routes>
   );
@@ -87,12 +164,13 @@ function AppRoutes() {
 function App() {
   return (
     <AuthProvider>
-      <Router>
-        <AppRoutes />
-      </Router>
+      <GuideProvider>
+        <Router>
+          <AppRoutes />
+        </Router>
+      </GuideProvider>
     </AuthProvider>
   );
 }
 
 export default App;
-
