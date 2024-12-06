@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import User from '../models/User.js';  // Make sure the path and extension are correct
+import jwt from 'jsonwebtoken';
+
 const router = express.Router();
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
@@ -30,7 +31,6 @@ router.post('/google-auth', async (req, res) => {
     res.status(500).json({ message: 'Error during Google authentication', error: error.message });
   }
 });
-
 
 // Complete Google Sign Up
 router.post('/complete-google-signup', async (req, res) => {
@@ -86,7 +86,6 @@ router.post('/signup', async (req, res) => {
   }
 });
 
-
 // Login
 router.post('/login', async (req, res) => {
   try {
@@ -130,4 +129,4 @@ router.post('/check-exists', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;

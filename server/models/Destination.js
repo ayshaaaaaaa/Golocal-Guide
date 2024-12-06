@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const destinationSchema = new mongoose.Schema({
   name: {
@@ -65,4 +65,4 @@ destinationSchema.index({
   'location.city': 'text'
 });
 
-module.exports = mongoose.model('Destination', destinationSchema);
+export default mongoose.model('Destination', destinationSchema);
