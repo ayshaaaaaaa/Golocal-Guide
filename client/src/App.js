@@ -11,6 +11,7 @@ import LoginPage from './pages/LoginPage';
 import TouristDashboard from './pages/tourist/TouristDashboard';
 import GuideDashboard from './pages/guide/GuideDashboard';
 import BusinessDashboard from './pages/business/BusinessDashboard';
+import Discover from './pages/tourist/DiscoverPage';
 
 import GuideProfile from './pages/guide/GuideProfile'; // Guide Profile Page
 import MyPackagesPage from './pages/guide/MyPackagesPage'; // My Packages Page
@@ -48,16 +49,24 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
 
       {/* Tourist Routes */}
-      <Route 
-        path="/tourist-dashboard" 
-        element={(
+     <Route 
+        path="/tourist-dashboard"
+        element={
           <ProtectedRoute allowedRoles={['Tourist']}>
             <TouristDashboard />
           </ProtectedRoute>
-        )} 
+        } 
       />
 
       {/* Guide Routes */}
+      <Route 
+          path="/discover" 
+          element={
+            <ProtectedRoute allowedRoles={['Tourist']}>
+              <Discover />
+            </ProtectedRoute>
+          } 
+        />
       <Route 
         path="/guide-dashboard" 
         element={(
