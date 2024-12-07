@@ -1,34 +1,49 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { useAuth } from './AuthContext'; // To get the user's token
+import axios from 'axios';
 
-// Create Context
 const GuideContext = createContext();
 
-// Hook to Use Context
-export const useGuide = () => useContext(GuideContext);
+export const useGuide = () => {
+  return useContext(GuideContext);
+};
 
-// GuideProvider Component
 export const GuideProvider = ({ children }) => {
-  // Initialize guideData with default values
-  const [guideData, setGuideData] = useState({
-    name: 'John Doe',
-    email: 'johndoe@example.com',
-    guideType: 'Historical Guide',
-    yearsOfExperience: 5,
-    fee: 200,
-    languages: ['English', 'French'],
-    expertiseAreas: ['Museums', 'Castles'],
-    profilePictureURL: 'https://via.placeholder.com/150',
-    rating: 4.5,
-    totalReviews: 120,
-  });
+  const { user, token } = useAuth(); // Access the logged-in user and token from AuthContext
+  const [guideData, setGuideData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  // Function to update guide data
-  const updateGuideData = (updatedData) => {
-    setGuideData((prev) => ({ ...prev, ...updatedData }));
-  };
+  
+  useEffect(() => {
+    console.log("user:", user);
+    console.log("token:", token);
+    const fetchGuideData = async () => {
+      if (user && token) {
+        try {
+          console.log("Hello from try block ");
+          const response = await axios.get('http://localhost:5000/api/guide/profile', {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          });
+          setGuideData(response.data); // Assuming the API returns the guide's data
+        } catch (err) {
+          setError('Failed to fetch guide data');
+        } finally {
+          setIsLoading(false);
+        }
+      } else {
+        setIsLoading(false); // Stop loading if no user or token
+      }
+    };
+
+    fetchGuideData(); // Always try to fetch, even if the user or token isn't available
+
+  }, [user, token]); // Re-fetch if user or token changes
 
   return (
-    <GuideContext.Provider value={{ guideData, updateGuideData }}>
+    <GuideContext.Provider value={{ guideData, isLoading, error }}>
       {children}
     </GuideContext.Provider>
   );

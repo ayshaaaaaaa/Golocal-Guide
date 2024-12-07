@@ -17,7 +17,7 @@ app.use(express.json());
 connectDB(); // Connect to the database
 
 app.use('/api/users', userRoutes);
-app.use('/api/profile', guideroutes);
+app.use('/api', guideroutes);
 app.use('/api', destinationRoutes);
 
 app.listen(port, () => {

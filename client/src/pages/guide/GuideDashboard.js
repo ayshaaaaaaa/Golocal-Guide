@@ -4,15 +4,31 @@ import DashboardHeader from '../../components/guide/Dashboard/DashboardHeader';
 import ProfileCard from '../../components/guide/Dashboard/ProfileCard';
 import GuideInfoCard from '../../components/guide/Dashboard/GuideInfoCard';
 import RatingsGraph from '../../components/guide/Dashboard/RatingsGraph';
-import { useGuide } from '../../context/GuideContext';
+import { useGuide } from '../../context/GuideContext'; // Import useGuide
 
 const GuideDashboard = () => {
-  const { guideData } = useGuide();
+  const { guideData, isLoading, error } = useGuide(); // Access guide data, loading state, and error
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Loading dashboard...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>{error}</p>
+      </div>
+    );
+  }
 
   if (!guideData) {
     return (
       <div className="flex justify-center items-center min-h-screen">
-        <p>Loading dashboard...</p>
+        <p>No guide data available</p>
       </div>
     );
   }
@@ -25,15 +41,15 @@ const GuideDashboard = () => {
       {/* Main Content */}
       <div className="flex-1 bg-gradient-to-b from-blue-50 to-indigo-100 p-8">
         {/* Header */}
-        <DashboardHeader guideName={guideData.name} />
+        <DashboardHeader guideName={guideData.name} /> {/* Use guideData */}
 
         {/* Cards Section */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Profile Card */}
-          <ProfileCard profileData={guideData} />
+          <ProfileCard profileData={guideData} /> {/* Use guideData */}
 
           {/* Guide Info Card */}
-          <GuideInfoCard guideInfo={guideData} />
+          <GuideInfoCard guideInfo={guideData} /> {/* Use guideData */}
         </div>
 
         {/* Graphs Section */}
