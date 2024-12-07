@@ -53,7 +53,10 @@ const destinationSchema = new mongoose.Schema({
   favorites: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-  }]
+  }],
+  guides: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Guide' }], // Related Guides
+  hotels: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Hotel' }], // Related Hotels
+  restaurants: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Restaurant' }] // Related Restaurants
 }, {
   timestamps: true
 });
