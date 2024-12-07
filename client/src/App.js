@@ -4,9 +4,9 @@ import { AuthProvider, useAuth } from './context/AuthContext';
 import { GuideProvider } from './context/GuideContext'; // Added GuideProvider for shared data
 
 // Pages and Components
-import HomePage from './pages/HomePage';
-import SignupPage from './pages/SignupPage';
-import LoginPage from './pages/LoginPage';
+import HomePage from './pages/common/HomePage';
+import SignupPage from './pages/common/SignupPage';
+import LoginPage from './pages/common/LoginPage';
 
 import TouristDashboard from './pages/tourist/TouristDashboard';
 import GuideDashboard from './pages/guide/GuideDashboard';

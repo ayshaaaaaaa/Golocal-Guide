@@ -1,5 +1,5 @@
 import cloudinary from '../../config/cloudinary.js';
-import Guide from '../../models/guideModel.js';
+import Guide from '../../models/guide/guideModel.js';  // Correct path with .js extension
 import multer from 'multer';
 
 // Multer setup to handle file uploads

@@ -1,6 +1,8 @@
-const express = require('express');
+import express from 'express';
+import destinationController from '../../controllers/tourist/destinationController.js';
+
 const router = express.Router();
-const destinationController = require('../controllers/destinationController');
+
 // const auth = require('../middleware/auth');
 
 // Public routes
@@ -11,5 +13,4 @@ router.get('/destinations/:id', destinationController.getDestination);
 // router.post('/destinations/:id/favorite', auth, destinationController.toggleFavorite);
 router.post('/destinations/:id/favorite', destinationController.toggleFavorite);
 
-module.exports = router;
-
+export default router;

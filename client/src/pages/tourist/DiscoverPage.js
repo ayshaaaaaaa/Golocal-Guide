@@ -2,9 +2,9 @@
 
 import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { MapPin, Calendar, DollarSign, Users, ArrowRight, Heart, CloudSun } from 'lucide-react' // Add CloudSun icon for weather
-import Sidebar from '../../components/tourist/Sidebar'
-import SearchSection from '../../components/tourist/SearchSection'
+import { MapPin, ArrowRight, Heart, CloudSun } from 'lucide-react' // Add CloudSun icon for weather
+import Sidebar from '../../components/tourist/Dashboard/Sidebar'
+import SearchSection from '../../components/tourist/Dashboard/SearchSection'
 import { destinationService } from '../../services/destinationService'
 import { useSearchParams } from 'react-router-dom'
 
