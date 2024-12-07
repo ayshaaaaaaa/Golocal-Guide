@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/User');
+import jwt from 'jsonwebtoken';
+import User from '../models/tourist/User.js';  // Use .js for ES Modules
 
 const auth = async (req, res, next) => {
   try {
@@ -19,5 +19,4 @@ const auth = async (req, res, next) => {
   }
 };
 
-module.exports = auth;
-
+export default auth;  // Use export default

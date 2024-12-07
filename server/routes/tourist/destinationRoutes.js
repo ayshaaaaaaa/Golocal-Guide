@@ -6,11 +6,11 @@ const router = express.Router();
 // const auth = require('../middleware/auth');
 
 // Public routes
-router.get('/destinations', destinationController.getDestinations);
-router.get('/destinations/:id', destinationController.getDestination);
+router.get('/', destinationController.getDestinations);
+router.get('/:id', destinationController.getDestination);
 
 // Protected routes
 // router.post('/destinations/:id/favorite', auth, destinationController.toggleFavorite);
-router.post('/destinations/:id/favorite', destinationController.toggleFavorite);
+router.post('/:id/favorite', destinationController.toggleFavorite);
 
 export default router;
