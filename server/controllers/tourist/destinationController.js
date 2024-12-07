@@ -1,4 +1,4 @@
-import Destination from '../models/Destination.js';  // Make sure the path and extension are correct
+import Destination from '../../models/tourist/Destination.js';  // Make sure the path and extension are correct
 import axios from 'axios';
 
 const WEATHER_API_KEY = process.env.OPENWEATHER_API_KEY;

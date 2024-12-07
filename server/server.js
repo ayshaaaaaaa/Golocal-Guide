@@ -2,9 +2,9 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
-import userRoutes from './routes/userRoutes.js';
+import userRoutes from './routes/tourist/userRoutes.js';
+import destinationRoutes from './routes/tourist/destinationRoutes.js';
 import guideroutes from './routes/guide/guideProfileRoutes.js';
-import destinationRoutes from './routes/destinationRoutes.js';
 
 dotenv.config(); // Load environment variables
 

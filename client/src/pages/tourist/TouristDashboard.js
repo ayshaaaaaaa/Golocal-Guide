@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
-import Sidebar from '../../components/tourist/Sidebar';
-import TopBar from '../../components/tourist/TopBar';
-import SearchSection from '../../components/tourist/SearchSection';
-import DestinationCard from '../../components/tourist/DestinationCard';
-import Calendar from '../../components/tourist/Calendar';
-import DoneTrips from '../../components/tourist/DoneTrips';
-import UserProfile from '../../components/tourist/UserProfile';
+import Sidebar from '../../components/tourist/Dashboard/Sidebar';
+import TopBar from '../../components/tourist/Dashboard/TopBar';
+import SearchSection from '../../components/tourist/Dashboard/SearchSection';
+import DestinationCard from '../../components/tourist/Dashboard/DestinationCard';
+import Calendar from '../../components/tourist/Dashboard/Calendar';
+import DoneTrips from '../../components/tourist/Dashboard/DoneTrips';
+import UserProfile from '../../components/tourist/Dashboard/UserProfile';
 import { useAuth } from '../../context/AuthContext';
 
 const destinations = [

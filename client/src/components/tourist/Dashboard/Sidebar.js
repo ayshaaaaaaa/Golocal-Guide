@@ -6,7 +6,7 @@ import { Home, Compass, Ticket, Heart, Settings, LogOut, MapPin, Menu, X } from 
 const menuItems = [
   { name: 'Dashboard', icon: Home, path: '/tourist-dashboard' },
   { name: 'Discover', icon: Compass, path: '/discover' },
-  { name: 'Tickets', icon: Ticket, path: '/tickets' },
+  { name: 'Booking', icon: Ticket, path: '/booking' },
   { name: 'Favorite', icon: Heart, path: '/favorite' },
   { name: 'Settings', icon: Settings, path: '/settings' }
 ];

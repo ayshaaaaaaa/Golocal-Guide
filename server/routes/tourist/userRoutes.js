@@ -1,5 +1,5 @@
 import express from 'express';
-import User from '../models/User.js';  // Make sure the path and extension are correct
+import User from '../../models/tourist/User.js';  // Make sure the path and extension are correct
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();

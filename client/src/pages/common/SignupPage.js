@@ -3,9 +3,9 @@
 import { useState, useEffect } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { ChevronDown, User, Lock, Mail, MapPin, Building, Briefcase, Phone, Globe, Award, Eye, EyeOff } from 'lucide-react'
-import { useAuth } from '../context/AuthContext'
+import { useAuth } from '../../context/AuthContext'
 import { useNavigate } from 'react-router-dom'
-import { validateName, validateEmail, validatePassword, validatePhone, validateLanguages, validateYears } from '../utils/validation'
+import { validateName, validateEmail, validatePassword, validatePhone, validateLanguages, validateYears } from '../../utils/validation'
 import PhoneInput from 'react-phone-input-2'
 import 'react-phone-input-2/lib/style.css'
 
