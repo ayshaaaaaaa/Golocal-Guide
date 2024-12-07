@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import User from '../models/User.js'; // Import User model with the '.js' extension
+import User from '../models/tourist/User.js';  // Use .js for ES Modules
 
 // Authentication middleware to check if the user is authenticated
 const auth = async (req, res, next) => {
@@ -31,4 +31,4 @@ const auth = async (req, res, next) => {
   }
 };
 
-export default auth; // Export the middleware function
+export default auth;  // Use export default
