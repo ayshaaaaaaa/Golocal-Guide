@@ -1,7 +1,7 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
-import { GuideProvider } from './context/GuideContext'; // Added GuideProvider for shared data
+import { GuideProvider } from './context/GuideContext';
 
 // Pages and Components
 import HomePage from './pages/common/HomePage';
@@ -12,19 +12,19 @@ import TouristDashboard from './pages/tourist/TouristDashboard';
 import GuideDashboard from './pages/guide/GuideDashboard';
 import BusinessDashboard from './pages/business/BusinessDashboard';
 import Discover from './pages/tourist/DiscoverPage';
+import BookingPage from './pages/tourist/BookingPage'; // Import the new BookingPage
 
-import GuideProfile from './pages/guide/GuideProfile'; // Guide Profile Page
-import MyPackagesPage from './pages/guide/MyPackagesPage'; // My Packages Page
-import AddPackageForm from './components/guide/Packages/AddPackageForm'; // Add Package Form
-import PackageCard from './components/guide/Packages/PackageCard'; // Package Card
+import GuideProfile from './pages/guide/GuideProfile';
+import MyPackagesPage from './pages/guide/MyPackagesPage';
+import AddPackageForm from './components/guide/Packages/AddPackageForm';
+import PackageCard from './components/guide/Packages/PackageCard';
 
-import TourRequests from './pages/guide/TourRequests'; // Tour Requests Page
-import AcceptedRequests from './pages/guide/AcceptedRequests'; // Accepted Requests Page
-import ChatBox from './components/guide/TourRequests/ChatBox'; // Chatbox Component for messages
+import TourRequests from './pages/guide/TourRequests';
+import AcceptedRequests from './pages/guide/AcceptedRequests';
+import ChatBox from './components/guide/TourRequests/ChatBox';
 
-// New Experience Pages and Components
-import GuideExperiencePage from './pages/guide/ExperiencesPage'; // Experience Page
-import AddExperienceForm from './components/guide/Experiences/AddExperienceForm'; // Add Experience Form
+import GuideExperiencePage from './pages/guide/ExperiencesPage';
+import AddExperienceForm from './components/guide/Experiences/AddExperienceForm';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -49,7 +49,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
 
       {/* Tourist Routes */}
-     <Route 
+      <Route 
         path="/tourist-dashboard"
         element={
           <ProtectedRoute allowedRoles={['Tourist']}>
@@ -57,16 +57,24 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/discover" 
+        element={
+          <ProtectedRoute allowedRoles={['Tourist']}>
+            <Discover />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/booking" 
+        element={
+          <ProtectedRoute allowedRoles={['Tourist']}>
+            <BookingPage />
+          </ProtectedRoute>
+        } 
+      />
 
       {/* Guide Routes */}
-      <Route 
-          path="/discover" 
-          element={
-            <ProtectedRoute allowedRoles={['Tourist']}>
-              <Discover />
-            </ProtectedRoute>
-          } 
-        />
       <Route 
         path="/guide-dashboard" 
         element={(
@@ -153,7 +161,7 @@ function AppRoutes() {
         path="/dashboard" 
         element={(
           <ProtectedRoute>
-            <Navigate to="/guide-dashboard" /> {/* Default redirect to guide dashboard */}
+            <Navigate to="/guide-dashboard" />
           </ProtectedRoute>
         )}
       />

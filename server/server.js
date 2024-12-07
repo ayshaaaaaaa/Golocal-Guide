@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import userRoutes from './routes/tourist/userRoutes.js';
 import destinationRoutes from './routes/tourist/destinationRoutes.js';
-import guideroutes from './routes/guide/guideProfileRoutes.js';
+import guideRoutes from './routes/guide/guideProfileRoutes.js';
 
 dotenv.config(); // Load environment variables
 
@@ -16,10 +16,12 @@ app.use(express.json());
 
 connectDB(); // Connect to the database
 
+// Mount routes with proper prefixes
 app.use('/api/users', userRoutes);
-app.use('/api', guideroutes);
-app.use('/api', destinationRoutes);
+app.use('/api/guides', guideRoutes); // Changed to /api/guides to match frontend requests
+app.use('/api/destinations', destinationRoutes); // Added proper prefix for consistency
 
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
+

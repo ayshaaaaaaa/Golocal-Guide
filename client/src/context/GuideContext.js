@@ -21,8 +21,8 @@ export const GuideProvider = ({ children }) => {
     const fetchGuideData = async () => {
       if (user && token) {
         try {
-          console.log("Hello from try block ");
-          const response = await axios.get('http://localhost:5000/api/guide/profile', {
+          // console.log("Hello from try block ");
+          const response = await axios.get('http://localhost:5000/api/guides/guide/profile', {
             headers: {
               Authorization: `Bearer ${token}`,
             },
