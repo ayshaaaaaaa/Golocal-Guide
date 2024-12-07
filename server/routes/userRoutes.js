@@ -1,7 +1,8 @@
-const express = require('express');
+import express from 'express';
+import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
+
 const router = express.Router();
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
@@ -130,4 +131,5 @@ router.post('/check-exists', async (req, res) => {
   }
 });
 
-module.exports = router;
+export default router;
+

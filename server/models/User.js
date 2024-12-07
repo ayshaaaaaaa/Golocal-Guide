@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const bcrypt = require('bcryptjs');
+import mongoose from 'mongoose';
+import bcrypt from 'bcryptjs';
 
 const userSchema = new mongoose.Schema({
   email: {
@@ -43,23 +43,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: function() { return this.role === 'Guide'; },
   },
-  // Fields for Business Owner
-  businessName: {
-    type: String,
-    required: function() { return this.role === 'Business Owner'; },
-  },
-  businessType: {
-    type: String,
-    required: function() { return this.role === 'Business Owner'; },
-  },
-  location: {
-    type: String,
-    required: function() { return this.role === 'Business Owner'; },
-  },
+
   // Common fields
   phone: {
     type: String,
-    required: function() { return this.role === 'Guide' || this.role === 'Business Owner'; },
+    required: function() { return this.role === 'Guide' ; },
   },
   photoURL: {
     type: String,
@@ -85,4 +73,4 @@ userSchema.methods.comparePassword = async function(candidatePassword) {
 
 const User = mongoose.model('User', userSchema);
 
-module.exports = User;
+export default User;

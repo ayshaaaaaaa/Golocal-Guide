@@ -18,11 +18,7 @@ const roleFields = {
     { name: "phone", label: "Contact Number", icon: Phone, type: "tel", placeholder: "Your phone number" },
   ],
   "Business Owner": [
-    { name: "businessName", label: "Business Name", icon: Building, type: "text", placeholder: "Your business name" },
-    { name: "businessType", label: "Business Type", icon: Briefcase, type: "text", placeholder: "Business type" },
-    { name: "location", label: "Business Location", icon: MapPin, type: "text", placeholder: "Business address" },
-    { name: "phone", label: "Business Phone", icon: Phone, type: "tel", placeholder: "Business contact number" },
-  ]
+    ]
 }
 
 const Signup = () => {
@@ -193,8 +189,11 @@ const Signup = () => {
       }
   
       setFormSuccess('Signup successful!');
-  
-      if (user.role === "Tourist") {
+      
+      if (user.role === "Business Owner") {
+        setTimeout(() => navigate('/setup-profile'), 2000);
+      }
+      else if (user.role === "Tourist") {
         setTimeout(() => navigate('/login'), 2000);
       } else {
         if (user.isProfileComplete) {
@@ -402,7 +401,8 @@ const Signup = () => {
                             dropdownClass="bg-white border-2 border-emerald-200 rounded-lg shadow-lg"
                           />
                         </div>
-                      ) : (
+                      ) :  (
+                        // Default Input Field
                         <>
                           <field.icon className="absolute left-3 top-3 text-emerald-700 h-4 w-4 md:h-5 md:w-5" />
                           <input
@@ -424,7 +424,7 @@ const Signup = () => {
                         <p className="text-emerald-600 text-xs mt-1">e.g.Mountain Trekking, City Tours</p>
                       )}
                       {field.name === 'businessType' && (
-                        <p className="text-emerald-600 text-xs mt-1">e.g. Hotel, Restaurant, Tour Agency</p>
+                        <p className="text-emerald-600 text-xs mt-1">e.g. Hotel, Restaurant</p>
                       )}
                     </motion.div>
                   ))}

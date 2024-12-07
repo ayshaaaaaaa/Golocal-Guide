@@ -1,6 +1,6 @@
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
-const { OAuth2Client } = require('google-auth-library');
+import User from '../models/User';
+import jwt from 'jsonwebtoken';
+import { OAuth2Client } from 'google-auth-library';
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
@@ -8,7 +8,7 @@ const generateToken = (user) => {
   return jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
 
-exports.signup = async (req, res) => {
+export const signup = async (req, res) => {
   try {
     const user = new User(req.body);
     await user.save();
@@ -19,7 +19,7 @@ exports.signup = async (req, res) => {
   }
 };
 
-exports.login = async (req, res) => {
+export const login = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     if (!user || !(await user.comparePassword(req.body.password))) {
@@ -32,7 +32,7 @@ exports.login = async (req, res) => {
   }
 };
 
-exports.googleSignIn = async (req, res) => {
+export const googleSignIn = async (req, res) => {
   try {
     const { token, role, additionalInfo } = req.body;
     const ticket = await client.verifyIdToken({
@@ -62,11 +62,11 @@ exports.googleSignIn = async (req, res) => {
   }
 };
 
-exports.getProfile = async (req, res) => {
+export const getProfile = async (req, res) => {
   res.send(req.user);
 };
 
-exports.updateProfile = async (req, res) => {
+export const updateProfile = async (req, res) => {
   const updates = Object.keys(req.body);
   const allowedUpdates = ['name', 'email', 'password', 'phone', 'experience', 'languages', 'specialization', 'businessName', 'businessType', 'location'];
   const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
