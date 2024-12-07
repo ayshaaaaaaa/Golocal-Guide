@@ -1,21 +1,23 @@
 import express from 'express';
-import authMiddleware from '../../middleware/auth.js'; // Authentication middleware
+import authMiddleware from '../../middleware/auth.js'; // Ensure this middleware checks authentication
+
 import Guide from '../../models/guide/guideModel.js';
 
 const router = express.Router();
-
-// Route for fetching guide profile
 router.get('/guide/profile', authMiddleware, async (req, res) => {
   try {
-    const guide = await Guide.findOne({ userID: req.user.id })
-      .populate('userID', 'name email profilePictureURL'); // Populate specific fields from the user
-
+    console.log('User ID from middleware:', req.user.id); // Log the user ID
+    const guide = await Guide.findOne({ userID: req.user.id }).populate(
+      'userID',
+      'name email profilePictureURL'
+    );
+    console.log('Guide Data:', guide); // Log the guide data
     if (!guide) {
       return res.status(404).json({ message: 'Guide not found' });
     }
-    
-    res.status(200).json(guide); // Send back the guide data as JSON
+    res.status(200).json(guide);
   } catch (error) {
+    console.error('Error fetching guide info:', error);
     res.status(500).json({ message: 'Error fetching guide info' });
   }
 });

@@ -1,7 +1,8 @@
 import React from 'react';
 
-const ProfileCard = ({ profileData }) => {
-  if (!profileData) {
+const ProfileCard = ({ profileData, user }) => {
+  // Ensure both profileData and user are available before rendering
+  if (!profileData || !user) {
     return (
       <div className="bg-white shadow-md rounded-lg p-6">
         <p className="text-gray-500">Profile data is loading...</p>
@@ -11,15 +12,22 @@ const ProfileCard = ({ profileData }) => {
 
   return (
     <div className="bg-white shadow-md rounded-lg p-6">
+      {/* Profile Image */}
       <img
         src={profileData.profilePictureURL || 'https://via.placeholder.com/150'}
-        alt={`${profileData.name}'s Profile`}
+        alt={`${user.name || 'User'}'s Profile`}
         className="w-24 h-24 rounded-full mb-4 mx-auto"
       />
+
+      {/* User Name */}
       <h2 className="text-center text-2xl font-semibold text-blue-800">
-        {profileData.name || 'No Name Available'}
+        {user.name || 'No Name Available'}
       </h2>
-      <p className="text-center text-gray-600">{profileData.email || 'No Email Available'}</p>
+
+      {/* User Email */}
+      <p className="text-center text-gray-600">{user.email || 'No Email Available'}</p>
+
+      {/* Rating Info */}
       <p className="text-center text-gray-600 mt-2">
         <strong>Rating:</strong>{' '}
         {profileData.rating ? `${profileData.rating.toFixed(1)} / 5` : 'No Rating Available'}

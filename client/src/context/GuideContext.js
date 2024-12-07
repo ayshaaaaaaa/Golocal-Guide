@@ -1,49 +1,61 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { useAuth } from './AuthContext'; // To get the user's token
-import axios from 'axios';
+import axios from 'axios'; // Import axios
 
+// Create the context
 const GuideContext = createContext();
 
-export const useGuide = () => {
-  return useContext(GuideContext);
-};
+export const useGuide = () => useContext(GuideContext);
 
 export const GuideProvider = ({ children }) => {
-  const { user, token } = useAuth(); // Access the logged-in user and token from AuthContext
   const [guideData, setGuideData] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  
   useEffect(() => {
-    console.log("user:", user);
-    console.log("token:", token);
     const fetchGuideData = async () => {
-      if (user && token) {
-        try {
-          // console.log("Hello from try block ");
-          const response = await axios.get('http://localhost:5000/api/guides/guide/profile', {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          });
-          setGuideData(response.data); // Assuming the API returns the guide's data
-        } catch (err) {
-          setError('Failed to fetch guide data');
-        } finally {
-          setIsLoading(false);
+      try {
+        console.log('Fetching guide data');
+        
+        // Get the token from localStorage (or wherever it is stored)
+        const token = localStorage.getItem('token'); // Adjust key name as needed
+        console.log(token);
+
+        // If the token is not available, handle the case (e.g., redirect or set an error)
+        if (!token) {
+          console.error('No token found');
+          setGuideData(null); // Or handle the error appropriately
+          setLoading(false);
+          return;
         }
-      } else {
-        setIsLoading(false); // Stop loading if no user or token
+
+        // Use axios to send the GET request with the Authorization header
+        const response = await axios.get('http://localhost:5000/api/guide/profile', {
+          method: 'GET',
+          headers: {
+            'Authorization': `Bearer ${token}`, // Ensure this is the correct token format
+          },
+        });
+
+        console.log('Fetched guide data:', response.data);
+        if (response.data) {
+          console.log('setting guide.data:');
+
+          setGuideData(response.data); // Store the guide data
+        } else {
+          setGuideData(null); // Or some default empty state
+        }
+      } catch (error) {
+        console.error('Error fetching guide data:', error);
+        setGuideData(null); // Optionally set to null on error
+      } finally {
+        setLoading(false);
       }
     };
 
-    fetchGuideData(); // Always try to fetch, even if the user or token isn't available
-
-  }, [user, token]); // Re-fetch if user or token changes
+    fetchGuideData();
+  }, []); // Empty dependency array ensures it only runs once on mount
 
   return (
-    <GuideContext.Provider value={{ guideData, isLoading, error }}>
+    <GuideContext.Provider value={{ guideData, loading }}>
       {children}
     </GuideContext.Provider>
   );

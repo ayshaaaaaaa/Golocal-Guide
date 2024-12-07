@@ -13,8 +13,6 @@ export const useAuth = () => useContext(AuthContext);
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(localStorage.getItem('token') || null);  // Initialize token from localStorage
-  
   const [error, setError] = useState(null);
 
   useEffect(() => {
@@ -25,8 +23,6 @@ export const AuthProvider = ({ children }) => {
           .then(res => res.json())
           .then(data => {
             setUser(data);
-            const token = localStorage.getItem('token');  // Set token when user data is fetched
-            setToken(token);  // Update token state
             setLoading(false);
           })
           .catch(err => {
@@ -35,7 +31,6 @@ export const AuthProvider = ({ children }) => {
           });
       } else {
         setUser(null);
-        setToken(null);  // Clear token if no user
         setLoading(false);
       }
     });
@@ -61,9 +56,7 @@ export const AuthProvider = ({ children }) => {
         throw new Error(data.message || 'Failed to create account');
       }
       setUser(data.user);
-      const token = data.token;
-      setToken(token);  // Set token in state
-      localStorage.setItem('token', token);  // Store token in localStorage
+      localStorage.setItem('token', data.token);
       return data.user;
     } catch (error) {
       console.error('Signup error:', error);
@@ -85,9 +78,7 @@ export const AuthProvider = ({ children }) => {
       const data = await response.json();
       if (!response.ok) throw new Error(data.message || 'Failed to login');
       setUser(data.user);
-      const token = data.token;
-      setToken(token);  // Set token in state
-      localStorage.setItem('token', token);  // Store token in localStorage
+      localStorage.setItem('token', data.token);
       return data.user;
     } catch (error) {
       console.error('Login error:', error);
@@ -95,6 +86,23 @@ export const AuthProvider = ({ children }) => {
       throw error;
     }
   };
+
+  const checkUserExists = async (email) => {
+    try {
+      const response = await fetch(`http://localhost:5000/api/users/check-exists`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email }),
+      });
+      const data = await response.json();
+      return data.exists;
+    } catch (error) {
+      console.error('Error checking user existence:', error);
+      throw error;
+    }
+  };  
 
   const googleAuth = async () => {
     setError(null);
@@ -124,9 +132,7 @@ export const AuthProvider = ({ children }) => {
         if (!response.ok) throw new Error(data.message || 'Failed to login with Google');
         
         setUser(data.user);
-        const token = data.token;
-        setToken(token);  // Set token in state
-        localStorage.setItem('token', token);  // Store token in localStorage
+        localStorage.setItem('token', data.token);
         return { userExists: true, user: data.user };
       } else {
         // New user, proceed with signup
@@ -153,9 +159,7 @@ export const AuthProvider = ({ children }) => {
         if (!response.ok) throw new Error(data.message || 'Failed to authenticate with Google');
         
         setUser(data.user);
-        const token = data.token;
-        setToken(token);  // Set token in state
-        localStorage.setItem('token', token);  // Store token in localStorage
+        localStorage.setItem('token', data.token);
         return { userExists: false, user: data.user };
       }
     } catch (error) {
@@ -165,12 +169,33 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const completeGoogleSignup = async (userData) => {
+    setError(null);
+    try {
+      const response = await fetch('http://localhost:5000/api/users/complete-google-signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(userData),
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.message || 'Failed to complete Google signup');
+      setUser(data.user);
+      localStorage.setItem('token', data.token);
+      return data.user;
+    } catch (error) {
+      console.error('Complete Google signup error:', error);
+      setError(error.message);
+      throw error;
+    }
+  };
+
   const logout = async () => {
     try {
       await signOut(auth);
       setUser(null);
-      setToken(null);  // Clear token from state
-      localStorage.removeItem('token');  // Remove token from localStorage
+      localStorage.removeItem('token');
     } catch (error) {
       console.error('Logout error:', error);
       setError(error.message);
@@ -178,29 +203,12 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const checkUserExists = async (email) => {
-    try {
-      const response = await fetch(`http://localhost:5000/api/users/check-exists`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email }),
-      });
-      const data = await response.json();
-      return data.exists;
-    } catch (error) {
-      console.error('Error checking user existence:', error);
-      throw error;
-    }
-  };
-
   const value = {
     user,
-    token,  // Provide token in context
     signup,
     login,
     googleAuth,
+    completeGoogleSignup,
     logout,
     loading,
     error,
@@ -211,3 +219,4 @@ export const AuthProvider = ({ children }) => {
 };
 
 export default AuthProvider;
+

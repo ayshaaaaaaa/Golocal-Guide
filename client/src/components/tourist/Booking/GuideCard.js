@@ -1,7 +1,12 @@
+import React from 'react';
 import { motion } from 'framer-motion';
 import { Star, Languages, Clock } from 'lucide-react';
 
 function GuideCard({ guide, onBook }) {
+  if (!guide || !guide.user) {
+    return null;
+  }
+
   return (
     <motion.div
       whileHover={{ scale: 1.02 }}
@@ -49,3 +54,4 @@ function GuideCard({ guide, onBook }) {
 }
 
 export default GuideCard;
+

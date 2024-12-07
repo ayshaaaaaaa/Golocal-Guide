@@ -54,26 +54,44 @@ const App = () => {
     setLoadingGuides(true);
     try {
       const guidePromises = guideIds.map(async (guideId) => {
-        const response = await fetch(`http://localhost:5000/api/guides/${guideId}`);
-        const text = await response.text();
-        console.log(`Response for guide ${guideId}:`, text);
-        if (!response.ok) throw new Error(`Failed to fetch guide ${guideId}: ${response.statusText}`);
         try {
-          return JSON.parse(text);
-        } catch (parseError) {
-          console.error(`Error parsing JSON for guide ${guideId}:`, parseError);
-          throw new Error(`Invalid JSON response for guide ${guideId}`);
+          const guideResponse = await fetch(`http://localhost:5000/api/guides/${guideId}`);
+          if (!guideResponse.ok) {
+            throw new Error(`Failed to fetch guide ${guideId}: ${guideResponse.statusText}`);
+          }
+          const guideData = await guideResponse.json();
+          console.log('Guide data:', guideData); // Log guide data for debugging
+  
+          if (!guideData.userID) {
+            console.error(`Guide ${guideId} has no associated user ID`);
+            return { ...guideData, user: { name: 'Unknown Guide' } };
+          }
+  
+          const userResponse = await fetch(`http://localhost:5000/api/users/${guideData.userID}`);
+          if (!userResponse.ok) {
+            throw new Error(`Failed to fetch user for guide ${guideId}: ${userResponse.statusText}`);
+          }
+          const userData = await userResponse.json();
+          console.log('User data:', userData); // Log user data for debugging
+  
+          return { ...guideData, user: userData };
+        } catch (error) {
+          console.error(`Error processing guide ${guideId}:`, error);
+          return null;
         }
       });
+  
       const guideData = await Promise.all(guidePromises);
-      setGuides(guideData);
+      const validGuides = guideData.filter(guide => guide !== null);
+      setGuides(validGuides);
     } catch (error) {
       console.error('Error fetching guide data:', error);
+      setGuides([]);
     } finally {
       setLoadingGuides(false);
     }
   };
-
+  
   const handleSearch = async (searchTerm) => {
     try {
       const data = await destinationService.getDestinations({ search: searchTerm });
