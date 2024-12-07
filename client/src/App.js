@@ -224,6 +224,54 @@ function AppRoutes() {
           </ProtectedRoute>
         )}
       />
+
+<Route 
+        path="/business-dashboard" 
+        element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
+            <BusinessDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/setup-profile" 
+        element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
+            <SetupProfilePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/manage-services" 
+        element={
+            <ServicesDashboard />
+        } 
+      />
+      <Route 
+        path="/manage-bookings" 
+        element={
+            <BookingDashboard />
+        } 
+      />
+      <Route 
+        path="/manage-reviews" 
+        element={
+            <ReviewDashboard />
+        } 
+      />
+      <Route 
+        path="/edit-profile" 
+        element={
+            <EditProfile />
+        } 
+      />
+      <Route 
+        path="/edit-payment-methods" 
+        element={
+            <Payment />
+        } 
+      />
+
     </Routes>
   );
 }
