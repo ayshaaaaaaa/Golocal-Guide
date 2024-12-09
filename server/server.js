@@ -2,16 +2,24 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
-import userRoutes from './routes/tourist/userRoutes.js';
-import destinationRoutes from './routes/tourist/destinationRoutes.js';
-import guideRoutes from './routes/guide/guideProfileRoutes.js';
+
 import businessSetupRoutes from './routes/business/businessSetupRoutes.js';
 import serviceRoutes from './routes/business/serviceRoutes.js';
+
+import userRoutes from './routes/tourist/userRoutes.js';
+import destinationRoutes from './routes/tourist/destinationRoutes.js';
 import hotelsRestaurantsRoutes from './routes/tourist/HotelsRestaurantsRoutes.js';
 import hotelRoomRoutes from './routes/tourist/hotelRoomRoutes.js';  
 import roomBookingRoutes from './routes/tourist/roomBookingRoutes.js';
 import tableBookingRoutes from './routes/tourist/tableBookingRoutes.js';
 import guideRequestRoutes from './routes/tourist/guideRequestRoutes.js';
+
+import guideRoutes from './routes/guide/guideProfileRoutes.js';  // Default import
+import experienceRoutes from './routes/guide/guideExperienceRoutes.js';  // Default import
+import packageRoutes from './routes/guide/packagesRoutes.js';  // Default import
+import guidereqsRoutes from './routes/guide/guideRequestsRoutes.js';
+
+
 
 dotenv.config(); // Load environment variables
 
@@ -26,7 +34,6 @@ connectDB(); // Connect to the database
 // Mount routes with proper prefixes
 app.use('/api/users', userRoutes);
 app.use('/api/business-setup', businessSetupRoutes);
-app.use('/api/guides', guideRoutes); // Changed to /api/guides to match frontend requests
 app.use('/api/destinations', destinationRoutes); // Added proper prefix for consistency
 app.use('/api', hotelsRestaurantsRoutes);
 app.use('/api/manage-services', serviceRoutes);
@@ -34,6 +41,14 @@ app.use('/api/hotel-rooms', hotelRoomRoutes);
 app.use('/api/room-bookings', roomBookingRoutes);
 app.use('/api/table-bookings', tableBookingRoutes);
 app.use('/api/guide-requests', guideRequestRoutes);
+
+app.use('/api/guide', guideRoutes); // Changed to /api/guides to match frontend requests
+app.use('/api', packageRoutes);  // Prefix all package routes with /api
+app.use('/api', experienceRoutes);  // Prefix all package routes with /api
+app.use('/api', guidereqsRoutes);
+
+
+
 
 // Example login route for issuing JWT tokens
 app.post('/api/login', (req, res) => {

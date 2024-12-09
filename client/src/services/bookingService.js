@@ -22,7 +22,7 @@ export const bookingService = {
   async getGuides(guideIds) {
     const guidePromises = guideIds.map(async (guideId) => {
       try {
-        const guideResponse = await fetch(`${API_BASE_URL}/guides/${guideId}`);
+        const guideResponse = await fetch(`${API_BASE_URL}/guide/${guideId}`);
         if (!guideResponse.ok) {
           throw new Error(`Failed to fetch guide ${guideId}`);
         }

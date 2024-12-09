@@ -1,4 +1,4 @@
-import Request from '../../models/guide/request.js';
+import Request from '../../models/guide/requests.js';
 import Guide from '../../models/guide/guideModel.js';
 
 export const createGuideRequest = async (req, res) => {

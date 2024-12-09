@@ -2,6 +2,10 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { GuideProvider } from './context/GuideContext';
+import { PackageProvider } from './context/PackageContext'; // Add PackageProvider
+import { ExperienceProvider } from './context/ExperienceContext'; // Add ExperienceProvider
+import { GuideRequestsProvider } from './context/RequestsContext'; // Correct import
+import EditPackage from './components/guide/Packages/EditPackage';
 
 // Pages and Components
 import HomePage from './pages/common/HomePage';
@@ -121,6 +125,77 @@ function AppRoutes() {
             <GuideProfile />
           </ProtectedRoute>
         )} 
+      />
+      <Route 
+        path="/my-packages" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <MyPackagesPage />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route path="/edit-package/:id" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <EditPackage />
+          </ProtectedRoute>
+        )} 
+        />
+      <Route 
+        path="/add-package" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <AddPackageForm />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route 
+        path="/tour-requests" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <TourRequests />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route 
+        path="/accepted-requests/:id" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide', 'Tourist']}>
+            <AcceptedRequests />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route 
+        path="/chat/:id" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide', 'Tourist']}>
+            <ChatBox />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route 
+        path="/experiences" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <GuideExperiencePage />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route 
+        path="/add-experience" 
+        element={(
+          <ProtectedRoute allowedRoles={['Guide']}>
+            <AddExperienceForm />
+          </ProtectedRoute>
+        )} 
+      />
+      <Route 
+        path="/dashboard" 
+        element={(
+          <ProtectedRoute>
+            <Navigate to="/guide-dashboard" /> {/ Default redirect to guide dashboard */}
+          </ProtectedRoute>
+        )}
       />
       <Route 
         path="/setup-profile" 
@@ -289,12 +364,19 @@ function AppRoutes() {
 function App() {
   return (
     <AuthProvider>
-      <GuideProvider>
-        <Router>
-          <AppRoutes />
-        </Router>
-      </GuideProvider>
-    </AuthProvider>
+    <GuideProvider>
+      <PackageProvider>
+        <ExperienceProvider>
+          <GuideRequestsProvider> {/* Use the correct provider */}
+            <Router>
+              <AppRoutes />
+            </Router>
+          </GuideRequestsProvider>
+        </ExperienceProvider>
+      </PackageProvider>
+    </GuideProvider>
+  </AuthProvider>
+
   );
 }
 

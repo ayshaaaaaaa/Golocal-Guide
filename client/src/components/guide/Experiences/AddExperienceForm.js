@@ -1,209 +1,224 @@
 import React, { useState } from 'react';
-import Axios from 'axios';
+import { motion } from 'framer-motion';
+import { Calendar, MapPin, Star, Tag, Image, Video } from 'lucide-react';
 
-const AddExperienceForm = ({ setExperiences, existingExperience = null }) => {
-  const [title, setTitle] = useState(existingExperience ? existingExperience.title : '');
-  const [description, setDescription] = useState(existingExperience ? existingExperience.description : '');
-  const [startDate, setStartDate] = useState(existingExperience ? existingExperience.startDate : '');
-  const [endDate, setEndDate] = useState(existingExperience ? existingExperience.endDate : '');
-  const [status, setStatus] = useState(existingExperience ? existingExperience.status : 'in-progress');
-  const [location, setLocation] = useState(existingExperience ? existingExperience.location : '');
-  const [rating, setRating] = useState(existingExperience ? existingExperience.rating : 5);
-  const [skillsLearned, setSkillsLearned] = useState(existingExperience ? existingExperience.skillsLearned.join(', ') : '');
-  const [tags, setTags] = useState(existingExperience ? existingExperience.tags.join(', ') : '');
-  const [images, setImages] = useState([]);
-  const [videos, setVideos] = useState([]);
-  const [attachments, setAttachments] = useState([]);
+const AddExperienceForm = ({ addExperience, onCancel }) => {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    startDate: '',
+    endDate: '',
+    status: 'in-progress',
+    location: '',
+    rating: 0,
+    tags: '',
+    images: '',
+    videos: ''
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const validateStatus = (startDate, endDate) => {
+    const today = new Date();
+    const start = startDate ? new Date(startDate) : null;
+    const end = endDate ? new Date(endDate) : null;
 
-    const experienceData = new FormData();
-    experienceData.append('title', title);
-    experienceData.append('description', description);
-    experienceData.append('startDate', startDate);
-    experienceData.append('endDate', endDate);
-    experienceData.append('status', status);
-    experienceData.append('location', location);
-    experienceData.append('rating', rating);
-    experienceData.append('skillsLearned', skillsLearned.split(','));
-    experienceData.append('tags', tags.split(','));
-    images.forEach(image => experienceData.append('images', image));
-    videos.forEach(video => experienceData.append('videos', video));
-    attachments.forEach(attachment => experienceData.append('attachments', attachment));
-
-    try {
-      const response = existingExperience
-        ? await Axios.put(`/api/experiences/${existingExperience._id}`, experienceData)
-        : await Axios.post('/api/experiences', experienceData);
-
-      setExperiences(prev => [...prev, response.data]);
-    } catch (error) {
-      console.error('Error adding experience:', error);
-    }
+    if (start && start > today) return 'upcoming';
+    if (end && end > today) return start && start > today ? 'upcoming' : 'in-progress';
+    return 'completed';
   };
 
-  const handleImageChange = (e) => setImages([...images, ...e.target.files]);
-  const handleVideoChange = (e) => setVideos([...videos, ...e.target.files]);
-  const handleAttachmentChange = (e) => setAttachments([...attachments, ...e.target.files]);
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+
+    setFormData((prevData) => {
+      const updatedData = { ...prevData, [name]: value };
+      const updatedStatus = validateStatus(updatedData.startDate, updatedData.endDate);
+      return { ...updatedData, status: updatedStatus };
+    });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const submissionData = {
+      ...formData,
+      tags: formData.tags.split(',').map(tag => tag.trim()),
+      images: formData.images.split(',').map(img => img.trim()),
+      videos: formData.videos.split(',').map(video => video.trim())
+    };
+    addExperience(submissionData);
+  };
 
   return (
-    <div className="flex justify-center items-center min-h-screen">
-      <form onSubmit={handleSubmit} className="w-full sm:w-4/4 md:w-2/2 lg:w-3/3 bg-white p-8 rounded-lg shadow-lg space-y-6">
-        <h2 className="text-2xl font-semibold text-center text-blue-800">{existingExperience ? 'Edit Experience' : 'Add Experience'}</h2>
-
-        {/* Title */}
-        <div>
-          <label className="block text-sm text-gray-600">Experience Title</label>
-          <input
-            type="text"
-            value={title}
-            onChange={(e) => setTitle(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        {/* Description */}
-        <div>
-          <label className="block text-sm text-gray-600">Description</label>
-          <textarea
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            required
-          />
-        </div>
-
-        {/* Dates */}
+    <motion.form
+      onSubmit={handleSubmit}
+      className="bg-white shadow-md rounded-lg p-8 space-y-6"
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3 }}
+    >
+      <h2 className="text-2xl font-semibold text-gray-800 mb-6">Add New Experience</h2>
+      
+      <div className="space-y-4">
+        <input
+          type="text"
+          name="title"
+          value={formData.title}
+          onChange={handleChange}
+          placeholder="Title"
+          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          required
+        />
+        
+        <textarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Description"
+          className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          rows="4"
+        />
+        
         <div className="flex space-x-4">
-          <div className="w-1/2">
-            <label className="block text-sm text-gray-600">Start Date</label>
+          <div className="flex-1">
+            <label className="flex items-center text-gray-700 mb-2">
+              <Calendar size={18} className="mr-2" />
+              Start Date
+            </label>
             <input
               type="date"
-              value={startDate}
-              onChange={(e) => setStartDate(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="startDate"
+              value={formData.startDate}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
-          <div className="w-1/2">
-            <label className="block text-sm text-gray-600">End Date</label>
+          <div className="flex-1">
+            <label className="flex items-center text-gray-700 mb-2">
+              <Calendar size={18} className="mr-2" />
+              End Date
+            </label>
             <input
               type="date"
-              value={endDate}
-              onChange={(e) => setEndDate(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              name="endDate"
+              value={formData.endDate}
+              onChange={handleChange}
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
-
-        {/* Status */}
+        
+        <div className="flex space-x-4">
+          <div className="flex-1">
+            <label className="flex items-center text-gray-700 mb-2">
+              <MapPin size={18} className="mr-2" />
+              Location
+            </label>
+            <input
+              type="text"
+              name="location"
+              value={formData.location}
+              onChange={handleChange}
+              placeholder="Location"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+          <div className="flex-1">
+            <label className="flex items-center text-gray-700 mb-2">
+              <Star size={18} className="mr-2" />
+              Rating
+            </label>
+            <input
+              type="number"
+              name="rating"
+              value={formData.rating}
+              onChange={handleChange}
+              placeholder="Rating"
+              min="0"
+              max="5"
+              className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+        </div>
+        
         <div>
-          <label className="block text-sm text-gray-600">Status</label>
+          <label className="flex items-center text-gray-700 mb-2">
+            <Tag size={18} className="mr-2" />
+            Tags (comma-separated)
+          </label>
+          <input
+            type="text"
+            name="tags"
+            value={formData.tags}
+            onChange={handleChange}
+            placeholder="adventure, nature, hiking"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        
+        <div>
+          <label className="flex items-center text-gray-700 mb-2">
+            <Image size={18} className="mr-2" />
+            Image URLs (comma-separated)
+          </label>
+          <input
+            type="text"
+            name="images"
+            value={formData.images}
+            onChange={handleChange}
+            placeholder="http://example.com/image1.jpg, http://example.com/image2.jpg"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        
+        <div>
+          <label className="flex items-center text-gray-700 mb-2">
+            <Video size={18} className="mr-2" />
+            Video URLs (comma-separated)
+          </label>
+          <input
+            type="text"
+            name="videos"
+            value={formData.videos}
+            onChange={handleChange}
+            placeholder="http://example.com/video1.mp4, http://example.com/video2.mp4"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+          />
+        </div>
+        
+        <div>
+          <label className="flex items-center text-gray-700 mb-2">
+            Status
+          </label>
           <select
-            value={status}
-            onChange={(e) => setStatus(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            name="status"
+            value={formData.status}
+            onChange={handleChange}
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            disabled
           >
             <option value="in-progress">In Progress</option>
             <option value="completed">Completed</option>
             <option value="upcoming">Upcoming</option>
           </select>
         </div>
-
-        {/* Location */}
-        <div>
-          <label className="block text-sm text-gray-600">Location</label>
-          <input
-            type="text"
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Rating */}
-        <div>
-          <label className="block text-sm text-gray-600">Rating (1-5)</label>
-          <input
-            type="number"
-            min="1"
-            max="5"
-            value={rating}
-            onChange={(e) => setRating(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Skills Learned */}
-        <div>
-          <label className="block text-sm text-gray-600">Skills Learned</label>
-          <input
-            type="text"
-            value={skillsLearned}
-            onChange={(e) => setSkillsLearned(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="E.g., Leadership, Time Management"
-          />
-        </div>
-
-        {/* Tags */}
-        <div>
-          <label className="block text-sm text-gray-600">Tags</label>
-          <input
-            type="text"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-            placeholder="E.g., Adventure, Nature"
-          />
-        </div>
-
-        {/* Upload images */}
-        <div>
-          <label className="block text-sm text-gray-600">Images</label>
-          <input
-            type="file"
-            accept="image/*"
-            multiple
-            onChange={handleImageChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Upload videos */}
-        <div>
-          <label className="block text-sm text-gray-600">Videos</label>
-          <input
-            type="file"
-            accept="video/*"
-            multiple
-            onChange={handleVideoChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
-        {/* Upload attachments */}
-        <div>
-          <label className="block text-sm text-gray-600">Attachments</label>
-          <input
-            type="file"
-            accept=".pdf,.docx,.txt"
-            multiple
-            onChange={handleAttachmentChange}
-            className="w-full p-3 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-          />
-        </div>
-
+      </div>
+      
+      <div className="flex justify-end space-x-4">
+        <button
+          type="button"
+          onClick={onCancel}
+          className="px-6 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition duration-300"
+        >
+          Cancel
+        </button>
         <button
           type="submit"
-          className="mt-6 w-full bg-blue-600 text-white py-3 rounded-full hover:bg-blue-700 transition duration-300"
+          className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300"
         >
-          {existingExperience ? 'Update Experience' : 'Add Experience'}
+          Add Experience
         </button>
-      </form>
-    </div>
+      </div>
+    </motion.form>
   );
 };
 
