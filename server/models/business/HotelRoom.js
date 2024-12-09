@@ -31,7 +31,9 @@ const hotelRoomSchema = new mongoose.Schema({
       default: 0
     }
   },
-  amenities: [String],
+  amenities: {
+    type: [String],
+   },
   bedType: {
     type: String,
     enum: ['Single', 'Double', 'Queen', 'King', 'Twin']
@@ -87,3 +89,4 @@ const hotelRoomSchema = new mongoose.Schema({
 const HotelRoom = mongoose.model('HotelRoom', hotelRoomSchema);
 
 export default HotelRoom;
+

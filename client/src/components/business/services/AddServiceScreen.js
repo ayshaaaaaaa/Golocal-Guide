@@ -19,12 +19,34 @@ const AddService = ({ isOpen, onClose, businessType, onServiceAdded }) => {
   }, [isOpen]);
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const { name, value, type, checked } = e.target;
+
+  if (type === 'checkbox') {
+    setFormData(prevData => {
+      const amenities = prevData.amenities || [];
+      if (checked) {
+        // Add the name of the amenity if it's checked
+        amenities.push(value);
+      } else {
+        // Remove the amenity if it's unchecked
+        const index = amenities.indexOf(value);
+        if (index !== -1) {
+          amenities.splice(index, 1);
+        }
+      }
+      return {
+        ...prevData,
+        amenities: amenities
+      };
+    });
+  } else {
     setFormData(prevData => ({
       ...prevData,
       [name]: type === 'checkbox' ? checked : value
     }));
-  };
+  }
+};
+
 
   const handleImageChange = (e) => {
     setImage([...e.target.files]);
@@ -311,7 +333,6 @@ const AddService = ({ isOpen, onClose, businessType, onServiceAdded }) => {
                     <input
                       id="image-upload"
                       type="file"
-                      accept="image/*"
                       onChange={handleImageChange}
                       className="hidden"
                     />

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Edit2, Trash2 } from 'lucide-react';
+import { Edit2, Trash2, DollarSign } from 'lucide-react';
 
 const ServiceCard = ({ service, onEdit, onDelete, onClick }) => {
   return (
@@ -14,13 +14,22 @@ const ServiceCard = ({ service, onEdit, onDelete, onClick }) => {
       onClick={() => onClick(service)}
     >
       <div className="relative group">
-        <img 
-          src={service.image} 
-          alt={service.name}
+        
+        <img
+         src={
+          service.images && service.images.length > 0
+          ? `${process.env.REACT_APP_API_URL || 'http://localhost:5000'}/${service.images[0].replace(/\\/g, '/')}` 
+          : 'fallback-image.jpg'
+         }
+          alt={service.name || 'Default Name'}
           className="w-full h-32 xs:h-36 sm:h-40 lg:h-48 object-cover transition-transform duration-300 group-hover:scale-105"
         />
+
         <div className="absolute top-2 right-2 bg-white/90 px-2 py-1 rounded-full shadow-sm">
-          <span className="text-emerald-600 font-semibold text-sm sm:text-base">${service.price}</span>
+        <span className="text-emerald-600 font-semibold text-sm flex items-center">
+            <DollarSign className="w-4 h-4 mr-1" />
+            {service.price}
+          </span>
         </div>
       </div>
       <div className="p-3 sm:p-4">
@@ -48,7 +57,7 @@ const ServiceCard = ({ service, onEdit, onDelete, onClick }) => {
             whileTap={{ scale: 0.95 }}
             onClick={(e) => {
               e.stopPropagation();
-              onDelete(service.id);
+              onDelete(service._id);
             }}
             className="p-1.5 sm:p-2 bg-red-50 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
             aria-label={`Delete ${service.name}`}

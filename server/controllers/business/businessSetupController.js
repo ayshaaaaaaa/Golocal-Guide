@@ -1,7 +1,128 @@
-import {BusinessUser} from '../../models/business/BusinessUser.js';
+import { BusinessUser } from '../../models/business/BusinessUser.js';
 import User from '../../models/tourist/User.js';
 import multer from 'multer';
 import path from 'path';
+
+export const getBusinessUserDetails = async (req, res) => {
+  try {
+    const businessUser = await BusinessUser.findById(req.params.id).populate('user', 'email');
+
+    if (!businessUser) {
+      return res.status(404).json({ message: 'Business user not found' });
+    }
+
+    // Check if the authenticated user is authorized to view this profile
+    if (businessUser.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to view this profile' });
+    }
+
+    res.status(200).json(businessUser);
+  } catch (error) {
+    console.error('Error fetching business user details:', error);
+    res.status(500).json({ message: 'Error fetching business user details', error: error.message });
+  }
+};
+
+// Update user profile
+export const updateUserProfile = async (req, res) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  try {
+    let businessUser = await BusinessUser.findById(req.params.id);
+
+    if (!businessUser) {
+      return res.status(404).json({ message: 'Business user not found' });
+    }
+
+    // Check if the authenticated user is authorized to update this profile
+    if (businessUser.user.toString() !== req.user.id) {
+      return res.status(403).json({ message: 'Not authorized to update this profile' });
+    }
+
+    const {
+      businessName,
+      description,
+      businessType,
+      contactInfo,
+      location,
+      media,
+      paymentMethods,
+      policies,
+      socialMedia,
+      features,
+      certifications,
+      tags,
+      // Hotel-specific fields
+      starRating,
+      amenities,
+      roomTypes,
+      checkInTime,
+      checkOutTime,
+      // Restaurant-specific fields
+      cuisine,
+      menuItems,
+      seatingCapacity,
+      reservationPolicy,
+      averageCost
+    } = req.body;
+
+    // Update common fields
+    businessUser.businessName = businessName || businessUser.businessName;
+    businessUser.description = description || businessUser.description;
+    businessUser.contactInfo = { ...businessUser.contactInfo, ...contactInfo };
+    businessUser.location = { ...businessUser.location, ...location };
+    businessUser.media = media || businessUser.media;
+    businessUser.paymentMethods = { ...businessUser.paymentMethods, ...paymentMethods };
+    businessUser.policies = { ...businessUser.policies, ...policies };
+    businessUser.socialMedia = { ...businessUser.socialMedia, ...socialMedia };
+    businessUser.features = features || businessUser.features;
+    businessUser.certifications = certifications || businessUser.certifications;
+    businessUser.tags = tags || businessUser.tags;
+
+    // Update business-specific fields
+    if (businessUser.businessType === 'hotel') {
+      businessUser.starRating = starRating || businessUser.starRating;
+      businessUser.amenities = amenities || businessUser.amenities;
+      businessUser.roomTypes = roomTypes || businessUser.roomTypes;
+      businessUser.checkInTime = checkInTime || businessUser.checkInTime;
+      businessUser.checkOutTime = checkOutTime || businessUser.checkOutTime;
+    } else if (businessUser.businessType === 'restaurant') {
+      businessUser.cuisine = cuisine || businessUser.cuisine;
+      businessUser.menuItems = menuItems || businessUser.menuItems;
+      businessUser.seatingCapacity = seatingCapacity || businessUser.seatingCapacity;
+      businessUser.reservationPolicy = reservationPolicy || businessUser.reservationPolicy;
+      businessUser.averageCost = averageCost || businessUser.averageCost;
+    }
+
+    // If businessType is changing, create a new document of the appropriate type
+    if (businessType && businessType !== businessUser.businessType) {
+      const newBusinessUserData = businessUser.toObject();
+      delete newBusinessUserData._id;
+      delete newBusinessUserData.__v;
+
+      if (businessType === 'hotel') {
+        businessUser = new Hotel(newBusinessUserData);
+      } else if (businessType === 'restaurant') {
+        businessUser = new Restaurant(newBusinessUserData);
+      } else {
+        return res.status(400).json({ message: 'Invalid business type' });
+      }
+
+      businessUser.businessType = businessType;
+    }
+
+    await businessUser.save();
+
+    res.status(200).json({ message: 'Business user profile updated successfully', businessUser });
+  } catch (error) {
+    console.error('Error updating user profile:', error);
+    res.status(500).json({ message: 'Error updating user profile', error: error.message });
+  }
+};
+
 
 export const saveBusinessDetails = async (req, res) => {
     try {

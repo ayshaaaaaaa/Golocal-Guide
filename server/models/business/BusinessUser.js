@@ -130,3 +130,4 @@ const Restaurant = BusinessUser.discriminator('restaurant', restaurantSchema);
 
 
 export { BusinessUser, Hotel, Restaurant };
+

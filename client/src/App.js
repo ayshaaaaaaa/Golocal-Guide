@@ -40,6 +40,8 @@ import BookingDashboard from './pages/business/BookingDashboard';
 import ReviewDashboard from './pages/business/ReviewDashboard';
 import EditProfile from './pages/business/EditProfile';
 import Payment from './pages/business/Payment';
+import AddServiceScreen from './components/business/services/AddServiceScreen';
+
 
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
@@ -72,6 +74,7 @@ function AppRoutes() {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/about" element={<AboutPage />} />
       <Route path="/contact" element={<ContactPage />} />
+      <Route path="/add-service" element={<AddServiceScreen />} />
       
 
       {/* Tourist Routes */}
@@ -329,34 +332,43 @@ function AppRoutes() {
       <Route 
         path="/manage-services" 
         element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
             <ServicesDashboard />
+          </ProtectedRoute>
         } 
       />
       <Route 
         path="/manage-bookings" 
         element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
             <BookingDashboard />
+            </ProtectedRoute>
         } 
       />
       <Route 
         path="/manage-reviews" 
         element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
             <ReviewDashboard />
+            </ProtectedRoute>
         } 
       />
       <Route 
-        path="/edit-profile" 
+        path="/settings" 
         element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
             <EditProfile />
+            </ProtectedRoute>
         } 
       />
       <Route 
         path="/edit-payment-methods" 
         element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
             <Payment />
+            </ProtectedRoute>
         } 
       />
-
     </Routes>
   );
 }

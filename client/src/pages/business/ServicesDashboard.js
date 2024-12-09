@@ -53,13 +53,24 @@ const ServicesDashboard = () => {
     }
   };
 
-  const handleEdit = (service) => {
-    console.log('Editing service:', service);
+  const handleEdit = async (updatedService) => {
+    try {
+      const token = localStorage.getItem('token');
+      const response = await axios.put(`http://localhost:5000/api/manage-services/${updatedService._id}`, updatedService, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setServices(services.map(service => service._id === updatedService._id ? response.data : service));
+    } catch (error) {
+      console.error('Error updating service:', error.response ? error.response.data : error.message);
+    }
   };
 
   const handleDelete = async (serviceId) => {
     try {
-      await axios.delete(`http://localhost:5000/api/manage-services/${serviceId}`);
+      const token = localStorage.getItem('token');
+      await axios.delete(`http://localhost:5000/api/manage-services/${serviceId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
       setServices(services.filter(service => service._id !== serviceId));
     } catch (error) {
       console.error('Error deleting service:', error);
@@ -100,8 +111,8 @@ const ServicesDashboard = () => {
       <Sidebar isOpen={isSidebarOpen} onClose={() => setIsSidebarOpen(false)} />
       
       {/* Main Content */}
-      <div className="flex-1 flex flex-col min-h-screen lg:ml-64 w-full">
-        <TopBar onMenuClick={toggleSidebar} />
+      <div className="flex-1 flex flex-col min-h-screen w-full">
+        <TopBar />
         
         {/* Main Content Area */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
@@ -155,6 +166,7 @@ const ServicesDashboard = () => {
               services={services}
               onEdit={handleEdit}
               onDelete={handleDelete}
+              businessType={businessType}
             />
           </div>
         </main>

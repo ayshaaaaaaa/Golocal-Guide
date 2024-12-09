@@ -2,9 +2,15 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ServiceCard from './ServiceCard';
 import ExpandedServiceCard from './ExpandedService';
+import EditServiceForm from './EditServiceForm';
 
-const ServiceList = ({ services, onEdit, onDelete }) => {
+const ServiceList = ({ services, onEdit, onDelete, businessType, onSave }) => {
   const [expandedService, setExpandedService] = useState(null);
+  const [editingService, setEditingService] = useState(null);
+
+  const handleExpand = (service) => {
+    setExpandedService(service);
+  };
 
   if (services.length === 0) {
     return (
@@ -19,6 +25,7 @@ const ServiceList = ({ services, onEdit, onDelete }) => {
       </motion.div>
     );
   }
+  console.log('Services:', services);
 
   return (
     <>
@@ -34,9 +41,9 @@ const ServiceList = ({ services, onEdit, onDelete }) => {
             >
               <ServiceCard
                 service={service}
-                onEdit={onEdit}
+                onEdit={() => setEditingService(service)}
                 onDelete={onDelete}
-                onClick={setExpandedService}
+                onClick={() => handleExpand(service)}
               />
             </motion.div>
           ))}
@@ -46,9 +53,26 @@ const ServiceList = ({ services, onEdit, onDelete }) => {
         {expandedService && (
           <ExpandedServiceCard
             service={expandedService}
+            businessType={businessType}
             onClose={() => setExpandedService(null)}
-            onEdit={onEdit}
+            onEdit={() => {
+              setEditingService(expandedService);
+              setExpandedService(null);
+            }}
             onDelete={onDelete}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {editingService && (
+          <EditServiceForm
+            service={editingService}
+            businessType={businessType}
+            onClose={() => setEditingService(null)}
+            onSave={(updatedService) => {
+              onEdit(updatedService);
+              setEditingService(null);
+            }}
           />
         )}
       </AnimatePresence>

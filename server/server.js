@@ -5,6 +5,8 @@ import connectDB from './config/db.js';
 
 import businessSetupRoutes from './routes/business/businessSetupRoutes.js';
 import serviceRoutes from './routes/business/serviceRoutes.js';
+import ManageBookingRoutes from './routes/business/ManageBookingRoutes.js'
+import businessdasboardRoutes from './routes/business/businessDashboardRoutes.js'
 
 import userRoutes from './routes/tourist/userRoutes.js';
 import destinationRoutes from './routes/tourist/destinationRoutes.js';
@@ -19,8 +21,6 @@ import experienceRoutes from './routes/guide/guideExperienceRoutes.js';  // Defa
 import packageRoutes from './routes/guide/packagesRoutes.js';  // Default import
 import guidereqsRoutes from './routes/guide/guideRequestsRoutes.js';
 
-
-
 dotenv.config(); // Load environment variables
 
 const app = express();
@@ -33,10 +33,8 @@ connectDB(); // Connect to the database
 
 // Mount routes with proper prefixes
 app.use('/api/users', userRoutes);
-app.use('/api/business-setup', businessSetupRoutes);
 app.use('/api/destinations', destinationRoutes); // Added proper prefix for consistency
 app.use('/api', hotelsRestaurantsRoutes);
-app.use('/api/manage-services', serviceRoutes);
 app.use('/api/hotel-rooms', hotelRoomRoutes);  
 app.use('/api/room-bookings', roomBookingRoutes);
 app.use('/api/table-bookings', tableBookingRoutes);
@@ -47,6 +45,13 @@ app.use('/api', packageRoutes);  // Prefix all package routes with /api
 app.use('/api', experienceRoutes);  // Prefix all package routes with /api
 app.use('/api', guidereqsRoutes);
 
+app.use('/api/business-setup', businessSetupRoutes);
+app.use('/api/manage-services', serviceRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/business-setup', businessSetupRoutes);
+app.use('/api/manage-services', serviceRoutes);
+app.use('/api/manage-bookings', ManageBookingRoutes);
+app.use('/api/business-dashboard',businessdasboardRoutes);
 
 
 

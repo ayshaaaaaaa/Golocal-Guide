@@ -18,7 +18,7 @@ export default function Sidebar() {
 
   useEffect(() => {
     const handleResize = () => {
-      if (window.innerWidth > 768) {
+      if (window.innerWidth >= 768) {
         setIsOpen(true);
       } else {
         setIsOpen(false);
@@ -31,8 +31,6 @@ export default function Sidebar() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const toggleSidebar = () => setIsOpen(!isOpen);
-
   const handleLogout = async () => {
     try {
       await logout();
@@ -42,95 +40,98 @@ export default function Sidebar() {
     }
   };
 
-  const sidebarVariants = {
-    open: { x: 0 },
-    closed: { x: '-100%' }
-  };
-
   return (
     <>
+      {/* Mobile Menu Button */}
       <button
         className="fixed top-4 left-4 z-50 p-2 bg-white rounded-full shadow-md md:hidden"
-        onClick={toggleSidebar}
+        onClick={() => setIsOpen(!isOpen)}
       >
         {isOpen ? <X className="w-6 h-6 text-emerald-600" /> : <Menu className="w-6 h-6 text-emerald-600" />}
       </button>
 
-      <AnimatePresence>
-        {isOpen && (
-          <motion.div
-            initial="closed"
-            animate="open"
-            exit="closed"
-            variants={sidebarVariants}
-            transition={{ duration: 0.3, type: 'tween' }}
-            className="fixed inset-y-0 left-0 z-40 w-64 bg-white shadow-lg md:relative md:shadow-none"
-          >
-            <div className="h-full overflow-y-auto p-6 flex flex-col">
-              <div className="flex items-center gap-2 mb-8">
+      {/* Sidebar */}
+      <aside className={`
+        fixed md:sticky top-0 left-0 h-screen w-64 
+        transition-transform duration-300 ease-in-out z-40
+        ${isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'}
+      `}>
+        <div className="h-full bg-white border-r border-gray-200 flex flex-col overflow-hidden">
+          <div className="flex-1 overflow-y-auto scrollbar-hide">
+            {/* Logo */}
+            <div className="p-6">
+              <div className="flex items-center gap-2">
                 <div className="w-8 h-8 bg-emerald-600 rounded-lg flex items-center justify-center">
                   <span className="text-white font-bold">G</span>
                 </div>
                 <span className="text-xl font-bold text-emerald-600">GoLocal Guide</span>
               </div>
+            </div>
 
-              <nav className="flex-1 space-y-2">
+            {/* Navigation */}
+            <nav className="px-4 pb-4">
+              <ul className="space-y-1">
                 {menuItems.map((item) => (
-                  <motion.div key={item.name} whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+                  <li key={item.name}>
                     <NavLink
                       to={item.path}
                       className={({ isActive }) =>
-                        `flex items-center gap-3 w-full p-3 rounded-lg transition-colors ${
+                        `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
                           isActive
                             ? 'bg-emerald-100 text-emerald-700'
                             : 'text-gray-600 hover:bg-emerald-50'
                         }`
                       }
                     >
-                      <item.icon size={20} />
-                      <span>{item.name}</span>
+                      <item.icon className="w-5 h-5" />
+                      <span className="text-sm font-medium">{item.name}</span>
                     </NavLink>
-                  </motion.div>
+                  </li>
                 ))}
-              </nav>
+              </ul>
+            </nav>
+          </div>
 
-              <div className="mt-auto space-y-2">
-                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
-                  <NavLink
-                    to="/settings"
-                    className={({ isActive }) =>
-                      `flex items-center gap-3 w-full p-3 rounded-lg transition-colors ${
-                        isActive
-                          ? 'bg-emerald-100 text-emerald-700'
-                          : 'text-gray-600 hover:bg-emerald-50'
-                      }`
-                    }
-                  >
-                    <Settings size={20} />
-                    <span>Settings</span>
-                  </NavLink>
-                </motion.div>
-                <motion.button
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  onClick={handleLogout}
-                  className="flex items-center gap-3 w-full p-3 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors rounded-lg"
+          {/* Footer */}
+          <div className="border-t border-gray-200 p-4">
+            <ul className="space-y-1">
+              <li>
+                <NavLink
+                  to="/settings"
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2 rounded-lg transition-colors ${
+                      isActive
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : 'text-gray-600 hover:bg-emerald-50'
+                    }`
+                  }
                 >
-                  <LogOut size={20} />
-                  <span>Log Out</span>
-                </motion.button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+                  <Settings className="w-5 h-5" />
+                  <span className="text-sm font-medium">Settings</span>
+                </NavLink>
+              </li>
+              <li>
+                <button
+                  onClick={handleLogout}
+                  className="flex w-full items-center gap-3 px-3 py-2 text-gray-600 hover:bg-red-50 hover:text-red-600 rounded-lg transition-colors"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="text-sm font-medium">Log Out</span>
+                </button>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </aside>
 
+      {/* Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 md:hidden"
-          onClick={toggleSidebar}
+          className="fixed inset-0 bg-black/50 z-30 md:hidden"
+          onClick={() => setIsOpen(false)}
         />
       )}
     </>
   );
 }
+
