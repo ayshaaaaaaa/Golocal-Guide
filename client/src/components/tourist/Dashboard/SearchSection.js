@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { Search, Filter, X, MapPin, Calendar, Users, DollarSign } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
-export default function SearchSection({ onSearchResults }) {
-  const navigate = useNavigate();
+export default function SearchSection({ onSearch }) {
   const location = useLocation();
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -47,18 +46,7 @@ export default function SearchSection({ onSearchResults }) {
   };
 
   const handleSearch = () => {
-    // Update URL with search params
-    const params = new URLSearchParams();
-    if (searchTerm) params.set('search', searchTerm);
-    if (filters.destination) params.set('destination', filters.destination);
-    if (filters.dates) params.set('dates', filters.dates);
-    if (filters.guests > 1) params.set('guests', filters.guests.toString());
-    if (filters.minPrice) params.set('minPrice', filters.minPrice);
-    if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
-    if (filters.activities.length) params.set('activities', filters.activities.join(','));
-
-    // Navigate to discover page with search params
-    navigate(`/discover?${params.toString()}`);
+    onSearch(searchTerm, filters);
   };
 
   return (

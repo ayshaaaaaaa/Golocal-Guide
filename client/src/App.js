@@ -7,12 +7,16 @@ import { GuideProvider } from './context/GuideContext';
 import HomePage from './pages/common/HomePage';
 import SignupPage from './pages/common/SignupPage';
 import LoginPage from './pages/common/LoginPage';
+import AboutPage from './pages/common/AboutPage';
+import ContactPage from './pages/common/ContactPage';
+
 
 import TouristDashboard from './pages/tourist/TouristDashboard';
 import GuideDashboard from './pages/guide/GuideDashboard';
 import BusinessDashboard from './pages/business/BusinessDashboard';
 import Discover from './pages/tourist/DiscoverPage';
-import BookingPage from './pages/tourist/BookingPage'; // Import the new BookingPage
+import BookingPage from './pages/tourist/BookingPage';
+import UpdateProfile from './pages/tourist/UpdateProfile'; // Import the new BookingPage
 
 import GuideProfile from './pages/guide/GuideProfile';
 import MyPackagesPage from './pages/guide/MyPackagesPage';
@@ -26,6 +30,13 @@ import ChatBox from './components/guide/TourRequests/ChatBox';
 import GuideExperiencePage from './pages/guide/ExperiencesPage';
 import AddExperienceForm from './components/guide/Experiences/AddExperienceForm';
 
+import SetupProfilePage from './pages/business/SetupProfilePage';
+import ServicesDashboard from './pages/business/ServicesDashboard';
+import BookingDashboard from './pages/business/BookingDashboard';
+import ReviewDashboard from './pages/business/ReviewDashboard';
+import EditProfile from './pages/business/EditProfile';
+import Payment from './pages/business/Payment';
+
 const ProtectedRoute = ({ children, allowedRoles }) => {
   const { user, loading } = useAuth();
 
@@ -33,8 +44,16 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
     return <div>Loading...</div>;
   }
 
-  if (!user || (allowedRoles && !allowedRoles.includes(user.role))) {
+  if (!user) {
     return <Navigate to="/login" replace />;
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (user.role === 'Business Owner' && !user.isProfileComplete) {
+    return <Navigate to="/setup-profile" replace />;
   }
 
   return children;
@@ -47,6 +66,9 @@ function AppRoutes() {
       <Route path="/" element={<HomePage />} />
       <Route path="/signup" element={<SignupPage />} />
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/contact" element={<ContactPage />} />
+      
 
       {/* Tourist Routes */}
       <Route 
@@ -73,6 +95,15 @@ function AppRoutes() {
           </ProtectedRoute>
         } 
       />
+      <Route 
+        path="/tourist/profile/update" 
+        element={
+          <ProtectedRoute allowedRoles={['Tourist']}>
+            <UpdateProfile />
+          </ProtectedRoute>
+        } 
+      />
+      
 
       {/* Guide Routes */}
       <Route 
@@ -92,6 +123,44 @@ function AppRoutes() {
         )} 
       />
       <Route 
+        path="/setup-profile" 
+        element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
+            <SetupProfilePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/manage-services" 
+        element={
+            <ServicesDashboard />
+        } 
+      />
+      <Route 
+        path="/manage-bookings" 
+        element={
+            <BookingDashboard />
+        } 
+      />
+      <Route 
+        path="/manage-reviews" 
+        element={
+            <ReviewDashboard />
+        } 
+      />
+      <Route 
+        path="/edit-profile" 
+        element={
+            <EditProfile />
+        } 
+      />
+      <Route 
+        path="/edit-payment-methods" 
+        element={
+            <Payment />
+        } 
+      />
+      <Route
         path="/my-packages" 
         element={(
           <ProtectedRoute allowedRoles={['Guide']}>
@@ -165,6 +234,54 @@ function AppRoutes() {
           </ProtectedRoute>
         )}
       />
+
+<Route 
+        path="/business-dashboard" 
+        element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
+            <BusinessDashboard />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/setup-profile" 
+        element={
+          <ProtectedRoute allowedRoles={['Business Owner']}>
+            <SetupProfilePage />
+          </ProtectedRoute>
+        } 
+      />
+      <Route 
+        path="/manage-services" 
+        element={
+            <ServicesDashboard />
+        } 
+      />
+      <Route 
+        path="/manage-bookings" 
+        element={
+            <BookingDashboard />
+        } 
+      />
+      <Route 
+        path="/manage-reviews" 
+        element={
+            <ReviewDashboard />
+        } 
+      />
+      <Route 
+        path="/edit-profile" 
+        element={
+            <EditProfile />
+        } 
+      />
+      <Route 
+        path="/edit-payment-methods" 
+        element={
+            <Payment />
+        } 
+      />
+
     </Routes>
   );
 }

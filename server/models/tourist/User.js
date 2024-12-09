@@ -43,23 +43,11 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: function() { return this.role === 'Guide'; },
   },
-  // Fields for Business Owner
-  businessName: {
-    type: String,
-    required: function() { return this.role === 'Business Owner'; },
-  },
-  businessType: {
-    type: String,
-    required: function() { return this.role === 'Business Owner'; },
-  },
-  location: {
-    type: String,
-    required: function() { return this.role === 'Business Owner'; },
-  },
+
   // Common fields
   phone: {
     type: String,
-    required: function() { return this.role === 'Guide' || this.role === 'Business Owner'; },
+    required: function() { return this.role === 'Guide' ; },
   },
   photoURL: {
     type: String,

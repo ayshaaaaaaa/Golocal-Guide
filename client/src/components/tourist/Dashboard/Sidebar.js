@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Home, Compass, Ticket, Heart, Settings, LogOut, MapPin, Menu, X } from 'lucide-react';
 
@@ -8,12 +8,13 @@ const menuItems = [
   { name: 'Discover', icon: Compass, path: '/discover' },
   { name: 'Booking', icon: Ticket, path: '/booking' },
   { name: 'Favorite', icon: Heart, path: '/favorite' },
-  { name: 'Settings', icon: Settings, path: '/settings' }
+  { name: 'Profile', icon: Settings, path: '/tourist/profile/update' }
 ];
 
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const handleResize = () => {
@@ -31,6 +32,17 @@ export default function Sidebar() {
   }, []);
 
   const toggleSidebar = () => setIsOpen(!isOpen);
+
+  const handleLogout = async () => {
+    try {
+      // Simulate logout logic (you can replace it with actual API call)
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulated delay
+      localStorage.removeItem('token'); // Remove authentication token
+      navigate('/login'); // Navigate to the login page
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
 
   const sidebarVariants = {
     open: { x: 0 },
@@ -81,6 +93,7 @@ export default function Sidebar() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
+                onClick={handleLogout}
                 className="flex items-center gap-3 w-full p-3 mt-4 text-gray-600 hover:bg-red-50 hover:text-red-600 transition-colors rounded-lg"
               >
                 <LogOut size={20} />
@@ -100,4 +113,3 @@ export default function Sidebar() {
     </>
   );
 }
-

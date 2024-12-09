@@ -6,14 +6,15 @@ import SearchSection from '../../components/tourist/Dashboard/SearchSection';
 import DestinationDetail from '../../components/tourist/Discover/DestinationDetail';
 import { destinationService } from '../../services/destinationService';
 import { MapPin, ArrowRight, Heart, CloudSun, Hotel, Users } from 'lucide-react';
+import { toast } from 'react-hot-toast';
 
 export default function DiscoverPage() {
   const [searchParams] = useSearchParams();
   const [destinations, setDestinations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [favorites, setFavorites] = useState([]);
   const [selectedDestination, setSelectedDestination] = useState(null);
+  const userId = localStorage.getItem('userId');
 
   useEffect(() => {
     fetchDestinations();
@@ -22,49 +23,77 @@ export default function DiscoverPage() {
   const fetchDestinations = async () => {
     try {
       setLoading(true);
+      setError(null);
       const params = Object.fromEntries(searchParams.entries());
       const response = await destinationService.getDestinations(params);
-      setDestinations(response.destinations.map(dest => ({
+      console.log('Fetched destinations:', response);
+      
+      // Ensure we're handling the correct response structure
+      const destinationsData = response.destinations || [];
+      
+      setDestinations(destinationsData.map(dest => ({
         ...dest,
-        isFavorite: dest.favorites.includes(localStorage.getItem('userId'))
+        isFavorite: Array.isArray(dest.favorites) && dest.favorites.includes(userId)
       })));
     } catch (err) {
-      setError(err.message);
+      console.error('Error fetching destinations:', err);
+      setError(err.message || 'Failed to fetch destinations');
+      toast.error('Failed to fetch destinations');
     } finally {
       setLoading(false);
     }
   };
 
-  const toggleFavorite = async (id) => {
+  const toggleFavorite = async (destinationId) => {
     try {
-      await destinationService.toggleFavorite(id);
+      console.log('Toggling favorite for destination:', destinationId);
+      // Find the current destination
+      const currentDestination = destinations.find(d => d._id === destinationId);
+      if (!currentDestination) {
+        throw new Error('Destination not found');
+      }
+  
+      // Optimistically update the UI
       setDestinations(prev =>
         prev.map(dest =>
-          dest._id === id
+          dest._id === destinationId
+            ? { ...dest, isFavorite: !dest.isFavorite }
+            : dest
+        )
+      );  
+
+      // Make the API call
+      const updatedDestination = await destinationService.toggleFavorite(destinationId);
+      console.log('Server response:', updatedDestination);
+
+      // Update with the server response
+      setDestinations(prev =>
+        prev.map(dest =>
+          dest._id === destinationId
+            ? {
+                ...dest,
+                favorites: updatedDestination.favorites || [],
+                isFavorite: Array.isArray(updatedDestination.favorites) && 
+                           updatedDestination.favorites.includes(userId)
+              }
+            : dest
+        )
+      );
+
+      toast.success('Favorite updated successfully');
+    } catch (err) {
+      console.error('Error toggling favorite:', err);
+      
+      // Revert the optimistic update on error
+      setDestinations(prev =>
+        prev.map(dest =>
+          dest._id === destinationId
             ? { ...dest, isFavorite: !dest.isFavorite }
             : dest
         )
       );
-    } catch (err) {
-      console.error('Error toggling favorite:', err);
-    }
-  };
-
-  const handleBookGuide = async (guideId) => {
-    try {
-      // Implement guide booking logic
-      console.log('Booking guide:', guideId);
-    } catch (err) {
-      console.error('Error booking guide:', err);
-    }
-  };
-
-  const handleBookHotel = async (hotelId) => {
-    try {
-      // Implement hotel booking logic
-      console.log('Booking hotel:', hotelId);
-    } catch (err) {
-      console.error('Error booking hotel:', err);
+      
+      toast.error('Failed to update favorite');
     }
   };
 
@@ -85,12 +114,13 @@ export default function DiscoverPage() {
         <button
           onClick={(e) => {
             e.stopPropagation();
+            e.preventDefault();
             toggleFavorite(destination._id);
           }}
           className="absolute top-4 right-4 p-2 rounded-full bg-white/80 backdrop-blur-sm hover:bg-white transition-colors"
         >
           <Heart
-            className={`w-5 h-5 ${
+            className={`w-5 h-5 transition-colors ${
               destination.isFavorite ? 'fill-red-500 text-red-500' : 'text-gray-600'
             }`}
           />
@@ -98,10 +128,6 @@ export default function DiscoverPage() {
 
         <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/60 to-transparent">
           <div className="flex justify-between text-white">
-            <div className="flex items-center gap-2">
-              <Hotel className="w-4 h-4" />
-              <span className="text-sm">{destination.hotels?.length || 0}</span>
-            </div>
             <div className="flex items-center gap-2">
               <Users className="w-4 h-4" />
               <span className="text-sm">{destination.guides?.length || 0}</span>
@@ -114,21 +140,21 @@ export default function DiscoverPage() {
         <div className="flex justify-between items-start mb-2">
           <h3 className="text-lg font-semibold text-gray-900">{destination.name}</h3>
           <div className="flex items-center gap-1 text-sm text-yellow-500">
-            ★ {destination.rating.toFixed(1)}
+            ★ {destination.rating?.toFixed(1) || '0.0'}
           </div>
         </div>
 
         <div className="flex items-center gap-2 text-sm text-gray-600 mb-3">
           <MapPin className="w-4 h-4" />
-          <span>{destination.location.address}</span>
+          <span>{destination.location?.address || 'No address available'}</span>
         </div>
 
         <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-          {destination.description}
+          {destination.description || 'No description available'}
         </p>
 
         <div className="flex flex-wrap gap-2 mb-4">
-          {destination.activities.slice(0, 3).map((activity) => (
+          {(destination.activities || []).slice(0, 3).map((activity) => (
             <span
               key={activity}
               className="px-2 py-1 text-xs rounded-full bg-emerald-50 text-emerald-600"
@@ -136,7 +162,7 @@ export default function DiscoverPage() {
               {activity}
             </span>
           ))}
-          {destination.activities.length > 3 && (
+          {(destination.activities || []).length > 3 && (
             <span className="px-2 py-1 text-xs rounded-full bg-gray-50 text-gray-600">
               +{destination.activities.length - 3}
             </span>
@@ -153,8 +179,8 @@ export default function DiscoverPage() {
 
         <div className="flex items-center justify-between pt-4 border-t">
           <div className="text-gray-900">
-            <span className="text-lg font-bold">${destination.price.amount}</span>
-            <span className="text-sm text-gray-600">/{destination.price.per}</span>
+            <span className="text-lg font-bold">${destination.price?.amount || 0}</span>
+            <span className="text-sm text-gray-600">/{destination.price?.per || 'day'}</span>
           </div>
 
           <motion.button
@@ -241,5 +267,13 @@ export default function DiscoverPage() {
       </main>
     </div>
   );
+}
+
+const handleBookGuide = () => {
+  //Implementation for booking guide
+}
+
+const handleBookHotel = () => {
+  //Implementation for booking hotel
 }
 

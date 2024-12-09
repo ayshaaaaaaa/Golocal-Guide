@@ -1,12 +1,14 @@
-"use client"
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ChevronDown, User, Settings, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../../context/AuthContext';
 
 export default function UserProfile({ user }) {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef(null);
+  const navigate = useNavigate();
+  const { logout } = useAuth();
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -23,10 +25,34 @@ export default function UserProfile({ user }) {
 
   const toggleDropdown = () => setIsOpen(!isOpen);
 
+  const handleLogout = async () => {
+    try {
+      // Simulate logout logic (you can replace it with actual API call)
+      await new Promise((resolve) => setTimeout(resolve, 500)); // Simulated delay
+      localStorage.removeItem('token'); // Remove authentication token
+      navigate('/login'); // Navigate to the login page
+    } catch (error) {
+      console.error('Logout failed:', error);
+    }
+  };
+
+
   const menuItems = [
-    { icon: <User size={16} />, label: 'View Profile', action: () => console.log('View Profile') },
-    { icon: <Settings size={16} />, label: 'Update Profile', action: () => console.log('Update Profile') },
-    { icon: <LogOut size={16} />, label: 'Logout', action: () => console.log('Logout') },
+    // { 
+    //   icon: <User size={16} />, 
+    //   label: 'View Profile', 
+    //   action: () => navigate('/tourist/profile')
+    // },
+    { 
+      icon: <Settings size={16} />, 
+      label: 'Update Profile', 
+      action: () => navigate('/tourist/profile/update')
+    },
+    { 
+      icon: <LogOut size={16} />, 
+      label: 'Logout', 
+      action: handleLogout 
+    },
   ];
 
   return (
@@ -38,13 +64,13 @@ export default function UserProfile({ user }) {
       >
         <div className="flex items-center gap-3">
           <img
-            src={user?.avatar || '/images/avatar.jpg'}
+            src={user?.photoURL || '/images/avatar.jpg'}
             alt={user?.name || 'User'}
             className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border-2 border-emerald-500"
           />
           <div>
             <h3 className="font-bold text-emerald-700 text-sm sm:text-base">{user?.name || 'User'}</h3>
-            <p className="text-xs sm:text-sm text-gray-500">Traveller</p>
+            <p className="text-xs sm:text-sm text-gray-500">{user?.role || 'Tourist'}</p>
           </div>
         </div>
         <motion.div

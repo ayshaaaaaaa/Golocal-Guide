@@ -1,8 +1,9 @@
 import express from 'express';
-import User from '../../models/tourist/User.js';  // Make sure the path and extension are correct
 import jwt from 'jsonwebtoken';
+import User from '../../models/tourist/User.js';
 
 const router = express.Router();
+
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '1d' });
@@ -31,6 +32,7 @@ router.post('/google-auth', async (req, res) => {
     res.status(500).json({ message: 'Error during Google authentication', error: error.message });
   }
 });
+
 
 // Complete Google Sign Up
 router.post('/complete-google-signup', async (req, res) => {
@@ -85,6 +87,7 @@ router.post('/signup', async (req, res) => {
     res.status(500).json({ message: 'Error creating user', error: error.message });
   }
 });
+
 
 // Login
 router.post('/login', async (req, res) => {

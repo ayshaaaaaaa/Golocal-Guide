@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import Sidebar from '../../components/tourist/Dashboard/Sidebar';
 import TopBar from '../../components/tourist/Dashboard/TopBar';
 import SearchSection from '../../components/tourist/Dashboard/SearchSection';
@@ -9,42 +10,8 @@ import Calendar from '../../components/tourist/Dashboard/Calendar';
 import DoneTrips from '../../components/tourist/Dashboard/DoneTrips';
 import UserProfile from '../../components/tourist/Dashboard/UserProfile';
 import { useAuth } from '../../context/AuthContext';
-
-const destinations = [
-  {
-    id: 1,
-    name: 'Mount Bromo',
-    location: 'Jl. Minato No.2 Ponorogo',
-    image: '/images/abcd.jpg',
-    airlineIcon: '/images/abcd.jpg',
-    date: '08 DEC',
-    time: '5:10 PM',
-    price: 248,
-    airline: 'Citilink'
-  },
-  {
-    id: 2,
-    name: 'Lake Toba',
-    location: 'Jl. Kakasi No.2 Jakarta',
-    image: '/images/abcd.jpg',
-    airlineIcon: '/images/abcd.jpg',
-    date: '21 NOV',
-    time: '8:20 PM',
-    price: 290,
-    airline: 'Lion Air'
-  },
-  {
-    id: 3,
-    name: 'Desert Uetune',
-    location: 'Jl. Naura No.2 Surabaya',
-    image: '/images/abcd.jpg',
-    airlineIcon: '/images/abcd.jpg',
-    date: '09 FEB',
-    time: '7:30 PM',
-    price: 308,
-    airline: 'Citilink'
-  }
-];
+import MyBookings from '../../components/tourist/Dashboard/MyBookings';
+import { destinationService } from '../../services/destinationService';
 
 const doneTrips = [
   {
@@ -69,9 +36,13 @@ const doneTrips = [
 
 export default function TouristDashboard() {
   const [isLoading, setIsLoading] = useState(true);
+  const [destinations, setDestinations] = useState([]);
+  const [error, setError] = useState(null);
   const { user } = useAuth();
   const [isMobile, setIsMobile] = useState(false);
   const [showRightSidebar, setShowRightSidebar] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
 
   useEffect(() => {
     const handleResize = () => {
@@ -81,15 +52,41 @@ export default function TouristDashboard() {
     handleResize();
     window.addEventListener('resize', handleResize);
     
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    const fetchDestinations = async () => {
+      try {
+        const data = await destinationService.getRecommendedDestinations();
+        console.log('Fetched destinations:', data);
+        setDestinations(data.slice(0, 3)); // Limit to 3 destinations
+        setIsLoading(false);
+      } catch (err) {
+        console.error('Error fetching destinations:', err);
+        setError('Failed to fetch destinations');
+        setIsLoading(false);
+      }
+    };
+
+    fetchDestinations();
 
     return () => {
       window.removeEventListener('resize', handleResize);
-      clearTimeout(timer);
     };
   }, []);
+
+  const handleSearch = (searchTerm, filters) => {
+    const params = new URLSearchParams();
+    if (searchTerm) params.set('search', searchTerm);
+    if (filters.destination) params.set('destination', filters.destination);
+    if (filters.dates) params.set('dates', filters.dates);
+    if (filters.guests > 1) params.set('guests', filters.guests.toString());
+    if (filters.minPrice) params.set('minPrice', filters.minPrice);
+    if (filters.maxPrice) params.set('maxPrice', filters.maxPrice);
+    if (filters.activities.length) params.set('activities', filters.activities.join(','));
+
+    // Only navigate if we're on the dashboard page
+    if (location.pathname === '/tourist-dashboard') {
+      navigate(`/discover?${params.toString()}`);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -116,16 +113,23 @@ export default function TouristDashboard() {
           />
           
           <div className="mt-6">
-            <SearchSection />
+            <SearchSection onSearch={handleSearch} />
           </div>
 
           <div className="mt-8">
             <h2 className="text-xl text-gray-600 font-bold mb-6">Recommended Destinations</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {destinations.map(destination => (
-                <DestinationCard key={destination.id} destination={destination} />
-              ))}
-            </div>
+            {error ? (
+              <p className="text-red-500">{error}</p>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {destinations.map(destination => (
+                  <DestinationCard key={destination.id} destination={destination} />
+                ))}
+              </div>
+            )}
+          </div>
+          <div className="mt-8">
+            <MyBookings />
           </div>
         </div>
       </main>
@@ -160,7 +164,7 @@ export default function TouristDashboard() {
                 <Calendar />
               </div>
               <div className="mt-6">
-                <DoneTrips trips={doneTrips} />
+                <DoneTrips/>
               </div>
             </div>
           </motion.aside>
@@ -169,3 +173,4 @@ export default function TouristDashboard() {
     </div>
   );
 }
+

@@ -1,4 +1,8 @@
+<<<<<<< HEAD:server/controllers/userController.js
+import User from '../models/User';
+=======
 import User from '../models/User.js';
+>>>>>>> 1134941e2db5013e7b2c368f1bb80cfdb55dae04:server/controllers/tourist/userController.js
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 
