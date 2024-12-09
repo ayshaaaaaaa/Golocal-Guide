@@ -1,8 +1,4 @@
-<<<<<<< HEAD:server/controllers/userController.js
-import User from '../models/User';
-=======
-import User from '../models/User.js';
->>>>>>> 1134941e2db5013e7b2c368f1bb80cfdb55dae04:server/controllers/tourist/userController.js
+import User from '../../models/tourist/User.js';
 import jwt from 'jsonwebtoken';
 import { OAuth2Client } from 'google-auth-library';
 
@@ -71,19 +67,44 @@ export const getProfile = async (req, res) => {
 };
 
 export const updateProfile = async (req, res) => {
-  const updates = Object.keys(req.body);
-  const allowedUpdates = ['name', 'email', 'password', 'phone', 'experience', 'languages', 'specialization', 'businessName', 'businessType', 'location'];
-  const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
-
-  if (!isValidOperation) {
-    return res.status(400).send({ error: 'Invalid updates!' });
-  }
-
   try {
-    updates.forEach((update) => req.user[update] = req.body[update]);
-    await req.user.save();
-    res.send(req.user);
+    const user = await User.findById(req.user._id);
+
+    if (user) {
+      user.name = req.body.name || user.name;
+      user.email = req.body.email || user.email;
+      user.phone = req.body.phone || user.phone;
+      user.photoURL = req.body.photoURL || user.photoURL;
+
+      if (user.role === 'Guide') {
+        user.experience = req.body.experience || user.experience;
+        user.languages = req.body.languages || user.languages;
+        user.specialization = req.body.specialization || user.specialization;
+      }
+
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+
+      const updatedUser = await user.save();
+
+      res.json({
+        _id: updatedUser._id,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        role: updatedUser.role,
+        phone: updatedUser.phone,
+        photoURL: updatedUser.photoURL,
+        experience: updatedUser.experience,
+        languages: updatedUser.languages,
+        specialization: updatedUser.specialization,
+      });
+    } else {
+      res.status(404);
+      throw new Error('User not found');
+    }
   } catch (error) {
-    res.status(400).send(error);
+    res.status(400);
+    throw new Error(error.message);
   }
 };

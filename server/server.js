@@ -6,7 +6,12 @@ import userRoutes from './routes/tourist/userRoutes.js';
 import destinationRoutes from './routes/tourist/destinationRoutes.js';
 import guideRoutes from './routes/guide/guideProfileRoutes.js';
 import businessSetupRoutes from './routes/business/businessSetupRoutes.js';
-
+import serviceRoutes from './routes/business/serviceRoutes.js';
+import hotelsRestaurantsRoutes from './routes/tourist/HotelsRestaurantsRoutes.js';
+import hotelRoomRoutes from './routes/tourist/hotelRoomRoutes.js';  
+import roomBookingRoutes from './routes/tourist/roomBookingRoutes.js';
+import tableBookingRoutes from './routes/tourist/tableBookingRoutes.js';
+import guideRequestRoutes from './routes/tourist/guideRequestRoutes.js';
 
 dotenv.config(); // Load environment variables
 
@@ -23,8 +28,12 @@ app.use('/api/users', userRoutes);
 app.use('/api/business-setup', businessSetupRoutes);
 app.use('/api/guides', guideRoutes); // Changed to /api/guides to match frontend requests
 app.use('/api/destinations', destinationRoutes); // Added proper prefix for consistency
-// app.use('/api', guideRoutes);
-// app.use('/api', packageRoutes);
+app.use('/api', hotelsRestaurantsRoutes);
+app.use('/api/manage-services', serviceRoutes);
+app.use('/api/hotel-rooms', hotelRoomRoutes);  
+app.use('/api/room-bookings', roomBookingRoutes);
+app.use('/api/table-bookings', tableBookingRoutes);
+app.use('/api/guide-requests', guideRequestRoutes);
 
 // Example login route for issuing JWT tokens
 app.post('/api/login', (req, res) => {

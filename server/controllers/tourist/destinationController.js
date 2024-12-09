@@ -26,54 +26,60 @@ const destinationController = {
   
       // Price filter
       if (minPrice || maxPrice) {
-        query['price.amount'] = {};
-        if (minPrice) query['price.amount'].$gte = Number(minPrice);
-        if (maxPrice) query['price.amount'].$lte = Number(maxPrice);
+        query.price = query.price || {};
+        if (minPrice) query.price.$gte = Number(minPrice);
+        if (maxPrice) query.price.$lte = Number(maxPrice);
       }
   
       // Activities filter
       if (activities) {
-        const activitiesArray = activities.split(',');
+        const activitiesArray = activities.split(',').map(activity => activity.trim());
         query.activities = { $in: activitiesArray };
       }
   
       // Tags filter
       if (tags) {
-        const tagsArray = tags.split(',');
+        const tagsArray = tags.split(',').map(tag => tag.trim());
         query.tags = { $in: tagsArray };
       }
   
-      const skip = (page - 1) * limit;
+      const skip = (parseInt(page) - 1) * parseInt(limit);
   
       // Fetch destinations
       const destinations = await Destination.find(query)
         .skip(skip)
-        .limit(Number(limit))
+        .limit(parseInt(limit))
         .sort({ createdAt: -1 });
   
       // Update weather for each destination
-      // Update weather for each destination
-      for (const destination of destinations) {
+      const weatherUpdatePromises = destinations.map(async (destination) => {
         if (destination.location && destination.location.city) {
-          await destinationController.updateWeather(destination);  // Correct call to the updateWeather method
+          try {
+            await destinationController.updateWeather(destination);
+          } catch (error) {
+            console.error(`Error updating weather for destination ${destination._id}:`, error);
+          }
         } else {
           console.log('Missing city for destination:', destination._id);
         }
-      }
-
+      });
+  
+      await Promise.all(weatherUpdatePromises);
+  
       const total = await Destination.countDocuments(query);
   
       res.json({
         destinations,
-        currentPage: page,
-        totalPages: Math.ceil(total / limit),
+        currentPage: parseInt(page),
+        totalPages: Math.ceil(total / parseInt(limit)),
         total
       });
     } catch (error) {
-      console.error('Error in getDestinations:', error);  // Log full error for debugging
-      res.status(500).json({ message: error.message });
+      console.error('Error in getDestinations:', error);
+      res.status(500).json({ message: 'An error occurred while fetching destinations', error: error.message });
     }
-  },  
+  },
+  
 
   // Get single destination
   async getDestination(req, res) {
@@ -118,23 +124,31 @@ const destinationController = {
   // Toggle favorite
   async toggleFavorite(req, res) {
     try {
+      console.log('Toggling favorite for destination:', req.params.id);
+      console.log('User ID:', req.user.id);
+  
       const destination = await Destination.findById(req.params.id);
       if (!destination) {
         return res.status(404).json({ message: 'Destination not found' });
       }
-
+  
       const userId = req.user.id;
       const favoriteIndex = destination.favorites.indexOf(userId);
-
+  
       if (favoriteIndex === -1) {
         destination.favorites.push(userId);
+        console.log('Added user to favorites');
       } else {
         destination.favorites.splice(favoriteIndex, 1);
+        console.log('Removed user from favorites');
       }
-
+  
       await destination.save();
+      console.log('Updated destination:', destination);
+  
       res.json(destination);
     } catch (error) {
+      console.error('Error in toggleFavorite:', error);
       res.status(500).json({ message: error.message });
     }
   }

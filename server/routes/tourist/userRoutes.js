@@ -1,6 +1,8 @@
 import express from 'express';
 import jwt from 'jsonwebtoken';
 import User from '../../models/tourist/User.js';
+import auth from '../../middleware/auth.js';
+import {updateProfile} from '../../controllers/tourist/userController.js'
 
 const router = express.Router();
 
@@ -131,5 +133,9 @@ router.post('/check-exists', async (req, res) => {
     res.status(500).json({ message: 'Error checking user existence', error: error.message });
   }
 });
+
+// Update user profile
+router.put('/profile', auth, updateProfile);
+
 
 export default router;

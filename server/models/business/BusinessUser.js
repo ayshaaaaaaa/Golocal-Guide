@@ -71,12 +71,62 @@ const businessUserSchema = new mongoose.Schema({
     instagram: String,
     twitter: String,
     linkedin: String
-  }
+  },
+  services: [{
+    type: mongoose.Schema.Types.ObjectId,
+    refPath: 'businessType'
+  }],
+  ratings: {
+    average: {
+      type: Number,
+      min: 0,
+      max: 5,
+      default: 0
+    },
+    count: {
+      type: Number,
+      default: 0
+    }
+  },
+  features: [String],
+  certifications: [String],
+  tags: [String]
 }, {
-  timestamps: true
+  timestamps: true,
+  discriminatorKey: 'businessType'
 });
 
 const BusinessUser = mongoose.model('BusinessUser', businessUserSchema);
+// Hotel-specific schema
+const hotelSchema = new mongoose.Schema({
+  starRating: {
+    type: Number,
+    min: 1,
+    max: 5
+  },
+  amenities: [String],
+  roomTypes: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'HotelRoom'
+  }],
+  checkInTime: String,
+  checkOutTime: String
+});
 
-export default BusinessUser;
+// Restaurant-specific schema
+const restaurantSchema = new mongoose.Schema({
+  cuisine: [String],
+  menuItems: [{
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'MenuItem'
+  }],
+  seatingCapacity: Number,
+  reservationPolicy: String,
+  averageCost: Number
+});
 
+const Hotel = BusinessUser.discriminator('hotel', hotelSchema);
+const Restaurant = BusinessUser.discriminator('restaurant', restaurantSchema);
+
+
+export { BusinessUser, Hotel, Restaurant };

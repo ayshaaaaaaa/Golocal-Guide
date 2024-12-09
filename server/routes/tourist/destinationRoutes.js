@@ -3,14 +3,14 @@ import destinationController from '../../controllers/tourist/destinationControll
 
 const router = express.Router();
 
-// const auth = require('../middleware/auth');
+import auth from '../../middleware/auth.js';
 
 // Public routes
 router.get('/', destinationController.getDestinations);
 router.get('/:id', destinationController.getDestination);
 
 // Protected routes
-// router.post('/destinations/:id/favorite', auth, destinationController.toggleFavorite);
-router.post('/:id/favorite', destinationController.toggleFavorite);
+// router.post('/:id/favorite', auth, destinationController.toggleFavorite);
+router.post('/:id/favorite', auth, destinationController.toggleFavorite);
 
 export default router;

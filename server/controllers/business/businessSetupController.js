@@ -1,5 +1,5 @@
-import BusinessUser from '../../models/business/BusinessUser.js';
-import User from '../../models//tourist/User.js';
+import {BusinessUser} from '../../models/business/BusinessUser.js';
+import User from '../../models/tourist/User.js';
 import multer from 'multer';
 import path from 'path';
 
