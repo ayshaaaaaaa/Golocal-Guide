@@ -25,11 +25,18 @@ import guidereqsRoutes from './routes/guide/guideRequestsRoutes.js';
 const app = express();
 const port = process.env.PORT || 5000;
 dotenv.config();
+// app.use(cors({
+//   origin: "https://golocal-guide.vercel.app/",
+//   methods: [GET,HEAD,PUT,PATCH,POST,DELETE],
+//   credentials: true
+// }));
+
 app.use(cors({
-  origin: "https://golocal-guide.vercel.app/",
-  methods: [GET,HEAD,PUT,PATCH,POST,DELETE],
-  credentials: true
+  origin: "*",
+  methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  credentials: true,
 }));
+
 
 app.use(express.json());
 
@@ -57,6 +64,10 @@ app.use('/api/business-setup', businessSetupRoutes);
 app.use('/api/manage-services', serviceRoutes);
 app.use('/api/manage-bookings', ManageBookingRoutes);
 app.use('/api/business-dashboard',businessdasboardRoutes);
+
+app.get('/api/test', (req, res) => {
+  res.status(200).json({ message: 'API is working on deployment!' });
+});
 
 
 
