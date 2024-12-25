@@ -20,10 +20,11 @@ export default function Policies({ onNext }) {
   };
 
   const handleSubmit = async (e) => {
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
     e.preventDefault();
     try {
       const token = localStorage.getItem('token'); // Assuming the token is stored in localStorage
-      const response = await axios.post('http://localhost:5000/api/business-setup/policies', formData, {
+      const response = await axios.post(`${API_URL}/business-setup/policies`, formData, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

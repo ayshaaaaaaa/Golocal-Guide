@@ -16,6 +16,7 @@ const BusinessDashboard = () => {
   const [error, setError] = useState(null);
   const [businessData, setBusinessData] = useState(null);
   const [selectedTimeframe, setSelectedTimeframe] = useState('today');
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 
   useEffect(() => {
@@ -30,7 +31,7 @@ const BusinessDashboard = () => {
   const fetchBusinessData = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get(`http://localhost:5000/api/business-dashboard/${user._id}`, {
+      const response = await axios.get(`${API_URL}/business-dashboard/${user._id}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBusinessData(response.data);

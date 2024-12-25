@@ -22,11 +22,12 @@ export default function ContactInformation({ onNext }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:5000/api/business-setup/contact-information',
+        `${API_URL}/business-setup/contact-information`,
          formData, 
          {
            headers: { Authorization: `Bearer ${token}` }

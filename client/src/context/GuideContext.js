@@ -4,6 +4,8 @@ import axios from 'axios';
 // Create the context
 const GuideContext = createContext();
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 export const useGuide = () => useContext(GuideContext);
 
 export const GuideProvider = ({ children }) => {
@@ -24,7 +26,7 @@ export const GuideProvider = ({ children }) => {
           return;
         }
 
-        const response = await axios.get('http://localhost:5000/api/guide/profile', {
+        const response = await axios.get(`${API_URL}/guide/profile`, {
           headers: {
             'Authorization': `Bearer ${token}`,
           },
@@ -53,7 +55,7 @@ export const GuideProvider = ({ children }) => {
       }
   
       const response = await axios.post(
-        'http://localhost:5000/api/guide/profile',
+        `${API_URL}/guide/profile`,
         updatedData,
         {
           headers: {

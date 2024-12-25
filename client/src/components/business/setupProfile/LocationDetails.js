@@ -4,6 +4,7 @@ import { MapPin } from 'lucide-react';
 import axios from 'axios';
 
 export default function LocationDetails({ onNext }) {
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
   const [formData, setFormData] = useState({
     street: '',
@@ -45,7 +46,7 @@ export default function LocationDetails({ onNext }) {
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:5000/api/business-setup/location-details',
+        `${API_URL}/business-setup/location-details`,
          formData, 
          {
            headers: { Authorization: `Bearer ${token}` }

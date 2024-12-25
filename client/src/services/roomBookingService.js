@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export const roomBookingService = {
   // Helper function to get headers with auth token
@@ -12,7 +12,7 @@ export const roomBookingService = {
   // Fetch completed bookings for the logged-in user
   getCompletedBookings: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/room-bookings/completed`, {
+      const response = await fetch(`${API_URL}/room-bookings/completed`, {
         headers: roomBookingService.getHeaders()
       });
       

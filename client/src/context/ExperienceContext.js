@@ -4,6 +4,8 @@ import Axios from 'axios';
 // Create a Context for Experiences
 const ExperienceContext = createContext();
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 // Custom hook to access the ExperienceContext
 export const useExperience = () => useContext(ExperienceContext);
 
@@ -17,7 +19,7 @@ export const ExperienceProvider = ({ children }) => {
     console.log("Fetching experiences...");
     setLoading(true);
     try {
-      const response = await Axios.get('http://localhost:5000/api/experiences');
+      const response = await Axios.get(`${API_URL}/experiences`);
       console.log("Fetched experiences:", response.data);
       setExperiences(response.data);
     } catch (err) {
@@ -34,7 +36,7 @@ export const ExperienceProvider = ({ children }) => {
     console.log("Add experience in context");
 
     try {
-      const response = await Axios.post('http://localhost:5000/api/experiences', newExperience);
+      const response = await Axios.post(`${API_URL}/experiences`, newExperience);
       console.log("Added experience now in contect hehe");
 
       setExperiences((prevExperiences) => [...prevExperiences, response.data]);
@@ -46,7 +48,7 @@ export const ExperienceProvider = ({ children }) => {
   // Delete an experience
   const deleteExperience = async (id) => {
     try {
-      await Axios.delete(`/api/experiences/${id}`);
+      await Axios.delete(`${API_URL}/api/experiences/${id}`);
       setExperiences((prevExperiences) => prevExperiences.filter(exp => exp._id !== id));
     } catch (err) {
       setError('Error deleting experience');

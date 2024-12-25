@@ -3,6 +3,8 @@ import axios from 'axios';
 
 const PackageContext = createContext();
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 // Hook to use the PackageContext
 export const usePackage = () => useContext(PackageContext);
 
@@ -11,8 +13,6 @@ export const PackageProvider = ({ children }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Base URL for the API
-  const BASE_URL = 'http://localhost:5000/api/packages';
   console.log("Fetching packages");
   // Helper function to get the token from localStorage
   const getToken = () => {
@@ -28,7 +28,7 @@ export const PackageProvider = ({ children }) => {
 
   const fetchPackages = async () => {
     try {
-      const response = await axios.get('http://localhost:5000/api/packages');
+      const response = await axios.get(`${API_URL}/packages`);
       console.log('Fetched packages:', response.data); // Log the response data
       setPackages(response.data);
       // Handle response data here
@@ -49,7 +49,7 @@ export const PackageProvider = ({ children }) => {
       if (!token) return;
       console.log('Token in addpackages: ');
 
-      const response = await axios.post('http://localhost:5000/api/packages', newPackage, {
+      const response = await axios.post(`${API_URL}/packages`, newPackage, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -72,7 +72,7 @@ export const PackageProvider = ({ children }) => {
       const token = getToken();
       if (!token) return;
 
-      const response = await axios.put(`${BASE_URL}/${id}`, updatedPackage, {
+      const response = await axios.put(`${API_URL}/${id}`, updatedPackage, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -96,7 +96,7 @@ export const PackageProvider = ({ children }) => {
       const token = getToken();
       if (!token) return;
       console.log("Token present too");
-      await axios.delete(`${BASE_URL}/${id}`, {
+      await axios.delete(`${API_URL}/${id}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

@@ -21,11 +21,12 @@ export default function PaymentMethods({ onNext }) {
   };
 
   const handleSubmit = async (e) => {
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
     e.preventDefault();
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:5000/api/business-setup/payment-methods',
+        `${API_URL}/business-setup/payment-methods`,
          formData, 
          {
            headers: { Authorization: `Bearer ${token}` }

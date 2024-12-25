@@ -70,7 +70,9 @@ const AddService = ({ isOpen, onClose, businessType, onServiceAdded }) => {
         formDataToSend.append('images', image);
       });
 
-      const response = await axios.post('http://localhost:5000/api/manage-services', formDataToSend, {
+      
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const response = await axios.post(`${API_URL}/manage-services`, formDataToSend, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'

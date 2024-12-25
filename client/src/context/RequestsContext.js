@@ -3,6 +3,9 @@ import axios from 'axios';
 
 const GuideRequestsContext = createContext();
 
+
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 export const useGuideRequests = () => useContext(GuideRequestsContext);
 
 export const GuideRequestsProvider = ({ children }) => {
@@ -18,7 +21,7 @@ export const GuideRequestsProvider = ({ children }) => {
     console.log("Got token");
       //setLoading(true);
       console.log("Context before loading");
-      const response = await axios.get('http://localhost:5000/api/guide/requests', {
+      const response = await axios.get(`${API_URL}/guide/requests`, {
         method: 'GET',
         headers: {
           'Authorization': `Bearer ${token}`, // Ensure this is the correct token format
@@ -51,7 +54,7 @@ export const GuideRequestsProvider = ({ children }) => {
   
       // Correct axios.put call with headers as a separate argument
       const response = await axios.put(
-        `http://localhost:5000/api/guide/requests/${requestId}/status`, // URL
+        `${API_URL}/guide/requests/${requestId}/status`, // URL
         { status }, // Payload (data to send)
         {
           headers: {
@@ -86,7 +89,7 @@ export const GuideRequestsProvider = ({ children }) => {
         throw new Error('No token found in local storage. User might not be logged in.');
       }
   
-      const response = await axios.get(`http://localhost:5000/api/guide/requests/${requestId}/chat`, {
+      const response = await axios.get(`${API_URL}/guide/requests/${requestId}/chat`, {
         headers: {
           Authorization: `Bearer ${token}`, // Ensure this is the correct token format
         },
@@ -110,7 +113,7 @@ const sendChatMessage = async (requestId, message) => {
     }
 
     const response = await axios.post(
-      `http://localhost:5000/api/guide/requests/${requestId}/chat`,
+      `${API_URL}/guide/requests/${requestId}/chat`,
       { message }, // Payload
       { // Headers
         headers: {

@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export const myBookingsService = {
   // Helper function to get headers with auth token
@@ -12,7 +12,7 @@ export const myBookingsService = {
   // Fetch all table bookings for the logged-in user
   getTableBookings: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/table-bookings/my-bookings`, {
+      const response = await fetch(`${API_URL}/table-bookings/my-bookings`, {
         headers: myBookingsService.getHeaders()
       });
       
@@ -31,7 +31,7 @@ export const myBookingsService = {
   // Fetch all room bookings for the logged-in user
   getRoomBookings: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/room-bookings/my-bookings`, {
+      const response = await fetch(`${API_URL}/room-bookings/my-bookings`, {
         headers: myBookingsService.getHeaders()
       });
       
@@ -49,7 +49,7 @@ export const myBookingsService = {
   // Fetch all guide booking requests for the logged-in user
   getGuideRequests: async () => {
     try {
-      const response = await fetch(`${API_BASE_URL}/guide-requests`, {
+      const response = await fetch(`${API_URL}/guide-requests`, {
         headers: myBookingsService.getHeaders()
       });
       

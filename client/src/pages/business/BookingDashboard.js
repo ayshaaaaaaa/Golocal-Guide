@@ -15,6 +15,7 @@ const BookingDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
   useEffect(() => {
     if (!user) {
@@ -27,7 +28,7 @@ const BookingDashboard = () => {
   const fetchBookings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/manage-bookings', {
+      const response = await axios.get(`${API_URL}/manage-bookings`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(response.data);
@@ -43,7 +44,7 @@ const BookingDashboard = () => {
   const handleAcceptBooking = async (bookingId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`http://localhost:5000/api/manage-bookings/confirm/${bookingId}`, {}, {
+      const response = await axios.put(`${API_URL}/manage-bookings/confirm/${bookingId}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(bookings.map(booking => 
@@ -57,7 +58,7 @@ const BookingDashboard = () => {
   const handleDeclineBooking = async (bookingId) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`http://localhost:5000/api/manage-bookings/decline/${bookingId}`, {}, {
+      const response = await axios.put(`${API_URL}/manage-bookings/decline/${bookingId}`, {}, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(bookings.map(booking => 

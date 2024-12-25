@@ -9,6 +9,7 @@ export default function BookingsTable() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   
+  
   useEffect(() => {
     fetchBookings();
   }, []);
@@ -16,7 +17,8 @@ export default function BookingsTable() {
   const fetchBookings = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/manage-bookings', {
+      const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+      const response = await axios.get(`${API_URL}/manage-bookings`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setBookings(response.data);

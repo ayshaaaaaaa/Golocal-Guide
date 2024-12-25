@@ -15,10 +15,12 @@ export default function BusinessDetails({ onNext }) {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
     try {
       const token = localStorage.getItem('token');
       await axios.post(
-        'http://localhost:5000/api/business-setup/business-details',
+        `${API_URL}/business-setup/business-details`,
         formData,
         {
           headers: { Authorization: `Bearer ${token}` },

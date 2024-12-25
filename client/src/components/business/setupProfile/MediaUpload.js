@@ -33,12 +33,13 @@ export default function MediaUpload({ onNext }) {
     setError('');
 
     const formData = new FormData();
+    const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
     images.forEach(image => formData.append('media', image));
     videos.forEach(video => formData.append('media', video));
 
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post('http://localhost:5000/api/business-setup/media-upload', formData, {
+      const response = await axios.post(`${API_URL}/business-setup/media-upload`, formData, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'multipart/form-data',

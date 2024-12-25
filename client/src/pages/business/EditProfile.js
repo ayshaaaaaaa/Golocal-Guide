@@ -31,12 +31,13 @@ const EditProfile = () => {
   const [fetchingProfile, setFetchingProfile] = useState(true);
   const { user } = useAuth();
   const navigate = useNavigate();
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
   useEffect(() => {
     const fetchBusinessProfile = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:5000/api/business-dashboard/${user._id}`, {
+        const response = await axios.get(`${API_URL}/business-dashboard/${user._id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         const profileData = response.data;
@@ -98,7 +99,7 @@ const EditProfile = () => {
         }
       });
 
-      await axios.put(`http://localhost:5000/api/business-dashboard/${user._id}`, formDataToSend, {
+      await axios.put(`${API_URL}/business-dashboard/${user._id}`, formDataToSend, {
         headers: { 
           Authorization: `Bearer ${token}`,
           'Content-Type': 'multipart/form-data'

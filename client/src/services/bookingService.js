@@ -1,9 +1,9 @@
-const API_BASE_URL = 'http://localhost:5000/api';
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
 export const bookingService = {
   // Destination related calls
   async getDestination(destinationId) {
-    const response = await fetch(`${API_BASE_URL}/destinations/${destinationId}`);
+    const response = await fetch(`${API_URL}/destinations/${destinationId}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch destination ${destinationId}`);
     }
@@ -11,7 +11,7 @@ export const bookingService = {
   },
 
   async searchDestinations(searchTerm) {
-    const response = await fetch(`${API_BASE_URL}/destinations?search=${encodeURIComponent(searchTerm)}`);
+    const response = await fetch(`${API_URL}/destinations?search=${encodeURIComponent(searchTerm)}`);
     if (!response.ok) {
       throw new Error('Failed to search destinations');
     }
@@ -22,7 +22,7 @@ export const bookingService = {
   async getGuides(guideIds) {
     const guidePromises = guideIds.map(async (guideId) => {
       try {
-        const guideResponse = await fetch(`${API_BASE_URL}/guide/${guideId}`);
+        const guideResponse = await fetch(`${API_URL}/guide/${guideId}`);
         if (!guideResponse.ok) {
           throw new Error(`Failed to fetch guide ${guideId}`);
         }
@@ -32,7 +32,7 @@ export const bookingService = {
           return { ...guideData, user: { name: 'Unknown Guide' } };
         }
 
-        const userResponse = await fetch(`${API_BASE_URL}/users/${guideData.userID}`);
+        const userResponse = await fetch(`${API_URL}/users/${guideData.userID}`);
         if (!userResponse.ok) {
           throw new Error(`Failed to fetch user for guide ${guideId}`);
         }
@@ -51,7 +51,7 @@ export const bookingService = {
 
   // Hotel related calls
   async getHotelsByCity(city) {
-    const response = await fetch(`${API_BASE_URL}/hotels/${encodeURIComponent(city)}`);
+    const response = await fetch(`${API_URL}/hotels/${encodeURIComponent(city)}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch hotels for city ${city}`);
     }
@@ -60,7 +60,7 @@ export const bookingService = {
 
   // New function to get hotel rooms by business user ID
   async getHotelRoomsByBusinessId(businessUserId) {
-    const response = await fetch(`${API_BASE_URL}/hotel-rooms/business/${businessUserId}`);
+    const response = await fetch(`${API_URL}/hotel-rooms/business/${businessUserId}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch hotel rooms for business user ${businessUserId}`);
     }
@@ -69,7 +69,7 @@ export const bookingService = {
 
   // Restaurant related calls
   async getRestaurantsByCity(city) {
-    const response = await fetch(`${API_BASE_URL}/restaurants/${encodeURIComponent(city)}`);
+    const response = await fetch(`${API_URL}/restaurants/${encodeURIComponent(city)}`);
     if (!response.ok) {
       throw new Error(`Failed to fetch restaurants for city ${city}`);
     }
@@ -78,7 +78,7 @@ export const bookingService = {
 
   // Booking related calls
   async createRoomBooking(bookingData) {
-    const response = await fetch(`${API_BASE_URL}/room-bookings`, {
+    const response = await fetch(`${API_URL}/room-bookings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -97,7 +97,7 @@ export const bookingService = {
 
   // New function to create table booking
   async createTableBooking(bookingData) {
-    const response = await fetch(`${API_BASE_URL}/table-bookings`, {
+    const response = await fetch(`${API_URL}/table-bookings`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -116,7 +116,7 @@ export const bookingService = {
 
   // Add this function to the bookingService object in bookingService.js
   async requestGuide(requestData) {
-    const response = await fetch(`${API_BASE_URL}/guide-requests`, {
+    const response = await fetch(`${API_URL}/guide-requests`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

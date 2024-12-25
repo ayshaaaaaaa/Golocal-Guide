@@ -31,7 +31,7 @@ const ServicesDashboard = () => {
   const fetchServices = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/manage-services', {
+      const response = await axios.get(`${API_URL}/manage-services`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setServices(response.data);
@@ -43,7 +43,7 @@ const ServicesDashboard = () => {
   const fetchBusinessType = async () => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.get('http://localhost:5000/api/manage-services/business-type', {
+      const response = await axios.get(`${API_URL}/manage-services/business-type`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       console.log(response.data.businessType)
@@ -56,7 +56,7 @@ const ServicesDashboard = () => {
   const handleEdit = async (updatedService) => {
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.put(`http://localhost:5000/api/manage-services/${updatedService._id}`, updatedService, {
+      const response = await axios.put(`${API_URL}/manage-services/${updatedService._id}`, updatedService, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setServices(services.map(service => service._id === updatedService._id ? response.data : service));
@@ -68,7 +68,7 @@ const ServicesDashboard = () => {
   const handleDelete = async (serviceId) => {
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:5000/api/manage-services/${serviceId}`, {
+      await axios.delete(`${API_URL}/manage-services/${serviceId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setServices(services.filter(service => service._id !== serviceId));
