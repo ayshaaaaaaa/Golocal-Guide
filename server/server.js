@@ -26,7 +26,7 @@ const app = express();
 const port = process.env.PORT || 5000;
 dotenv.config();
 app.use(cors({
-  origin: "https://golocal-guide.vercel.app/",
+  origin: "https://golocal-guide.vercel.app",
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
   credentials: true
 }));
