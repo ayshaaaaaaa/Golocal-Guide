@@ -8,6 +8,8 @@ import {
 
 const AuthContext = createContext();
 
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+
 export const useAuth = () => useContext(AuthContext);
 
 export const AuthProvider = ({ children }) => {
@@ -19,7 +21,7 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = auth.onAuthStateChanged((firebaseUser) => {
       if (firebaseUser) {
         // Fetch user data from your backend
-        fetch(`http://localhost:5000/api/users/${firebaseUser.uid}`)
+        fetch(`${API_URL}users/${firebaseUser.uid}`)
           .then(res => res.json())
           .then(data => {
             setUser(data);
@@ -41,7 +43,7 @@ export const AuthProvider = ({ children }) => {
   const signup = async (email, password, name, role, additionalInfo) => {
     setError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/users/signup', {
+      const response = await fetch(`${API_URL}/users/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -68,7 +70,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     setError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/users/login', {
+      const response = await fetch(`${API_URL}/users/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -89,7 +91,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkUserExists = async (email) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/users/check-exists`, {
+      const response = await fetch(`${API_URL}/users/check-exists`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -116,7 +118,7 @@ export const AuthProvider = ({ children }) => {
       
       if (userExists) {
         // User already exists, proceed with login
-        const response = await fetch('http://localhost:5000/api/users/google-auth', {
+        const response = await fetch(`${API_URL}/users/google-auth`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -136,7 +138,7 @@ export const AuthProvider = ({ children }) => {
         return { userExists: true, user: data.user };
       } else {
         // New user, proceed with signup
-        const response = await fetch('http://localhost:5000/api/users/google-auth', {
+        const response = await fetch(`${API_URL}/users/google-auth`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -172,7 +174,7 @@ export const AuthProvider = ({ children }) => {
   const completeGoogleSignup = async (userData) => {
     setError(null);
     try {
-      const response = await fetch('http://localhost:5000/api/users/complete-google-signup', {
+      const response = await fetch(`${API_URL}/users/complete-google-signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
