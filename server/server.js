@@ -70,7 +70,6 @@ app.get('/api/test', (req, res) => {
 });
 
 
-
 // Example login route for issuing JWT tokens
 app.post('/api/login', (req, res) => {
   const { username, password } = req.body;
