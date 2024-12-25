@@ -25,18 +25,11 @@ import guidereqsRoutes from './routes/guide/guideRequestsRoutes.js';
 const app = express();
 const port = process.env.PORT || 5000;
 dotenv.config();
-// app.use(cors({
-//   origin: "https://golocal-guide.vercel.app/",
-//   methods: [GET,HEAD,PUT,PATCH,POST,DELETE],
-//   credentials: true
-// }));
-
 app.use(cors({
-  origin: "*",
+  origin: "https://golocal-guide.vercel.app/",
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-  credentials: true,
+  credentials: true
 }));
-
 
 app.use(express.json());
 
