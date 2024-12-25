@@ -51,7 +51,6 @@ const requestSchema = new Schema(
     },
     phone: {
       type: String,
-      required: [true, 'Phone number is required'],
       validate: {
         validator: function (value) {
           return /^\+?[1-9]\d{1,14}$/.test(value); // Validates international phone number format

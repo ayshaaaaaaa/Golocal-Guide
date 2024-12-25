@@ -1,16 +1,10 @@
 import TableBooking from '../../models/tourist/TableBooking.js';
-// import { validateObjectId } from '../../utils/validation.js';
 
 // Create a new table booking
 export const createTableBooking = async (req, res) => {
   try {
     const { businessId, date, time, numberOfPeople, specialRequests } = req.body;
     const userId = req.user._id; // Assuming user is authenticated
-
-    // // Validate businessId
-    // if (!validateObjectId(businessId)) {
-    //   return res.status(400).json({ message: 'Invalid business ID' });
-    // }
 
     // Create new booking
     const booking = new TableBooking({
