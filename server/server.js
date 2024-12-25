@@ -25,15 +25,30 @@ import guidereqsRoutes from './routes/guide/guideRequestsRoutes.js';
 const app = express();
 const port = process.env.PORT || 5000;
 dotenv.config();
+app.use(express.json());
+
+connectDB(); // Connect to the database
+
+// app.use(cors({
+//   origin: "https://golocal-guide.vercel.app",
+//   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+//   credentials: true
+// }));
+
 app.use(cors({
-  origin: "https://golocal-guide.vercel.app",
+  origin: '*',  // Allow all origins
   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
   credentials: true
 }));
 
-app.use(express.json());
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    console.log('Response Headers:', res.getHeaders());
+  });
+  next();
+});
 
-connectDB(); // Connect to the database
+
 
 app.get('/', (req, res) => {
   res.json('API is running...');
