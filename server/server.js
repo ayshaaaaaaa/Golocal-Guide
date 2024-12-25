@@ -1,6 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import jwt from 'jsonwebtoken';
 import connectDB from './config/db.js';
 
 import businessSetupRoutes from './routes/business/businessSetupRoutes.js';
@@ -21,12 +22,15 @@ import experienceRoutes from './routes/guide/guideExperienceRoutes.js';  // Defa
 import packageRoutes from './routes/guide/packagesRoutes.js';  // Default import
 import guidereqsRoutes from './routes/guide/guideRequestsRoutes.js';
 
-dotenv.config(); // Load environment variables
-
 const app = express();
 const port = process.env.PORT || 5000;
 dotenv.config();
-app.use(cors());
+app.use(cors({
+  origin: "https://golocal-guide-ckvk.vercel.app", 
+  credentials: true,
+}));
+
+
 app.use(express.json());
 
 connectDB(); // Connect to the database
@@ -45,9 +49,6 @@ app.use('/api', packageRoutes);  // Prefix all package routes with /api
 app.use('/api', experienceRoutes);  // Prefix all package routes with /api
 app.use('/api', guidereqsRoutes);
 
-app.use('/api/business-setup', businessSetupRoutes);
-app.use('/api/manage-services', serviceRoutes);
-app.use('/api/users', userRoutes);
 app.use('/api/business-setup', businessSetupRoutes);
 app.use('/api/manage-services', serviceRoutes);
 app.use('/api/manage-bookings', ManageBookingRoutes);
