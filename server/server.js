@@ -26,14 +26,18 @@ const app = express();
 const port = process.env.PORT || 5000;
 dotenv.config();
 app.use(cors({
-  origin: "https://golocal-guide-ckvk.vercel.app", 
-  credentials: true,
+  origin: "https://golocal-guide.vercel.app/",
+  methods: [GET,HEAD,PUT,PATCH,POST,DELETE],
+  credentials: true
 }));
-
 
 app.use(express.json());
 
 connectDB(); // Connect to the database
+
+app.get('/', (req, res) => {
+  res.json('API is running...');
+})
 
 // Mount routes with proper prefixes
 app.use('/api/users', userRoutes);
@@ -74,4 +78,3 @@ app.post('/api/login', (req, res) => {
 app.listen(port, () => {
   console.log(`Server is running on port: ${port}`);
 });
-
