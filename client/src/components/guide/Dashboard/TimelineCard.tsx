@@ -27,7 +27,7 @@ const TimelineCard = () => {
       variants={cardVariants}
     >
       <h2 className="text-2xl font-semibold text-emerald-800 mb-4">Timeline</h2>
-      <div className="space-y-4">
+      {/* <div className="space-y-4">
         <TimelineItem 
           title="All Hands Meeting" 
           time="10:00 PM" 
@@ -44,7 +44,7 @@ const TimelineCard = () => {
           time="12:00 PM" 
           description="Monthly team bonding session" 
         />
-      </div>
+      </div> */}
       <motion.button
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
