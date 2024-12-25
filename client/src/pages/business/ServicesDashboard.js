@@ -16,6 +16,7 @@ const ServicesDashboard = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [businessType, setBusinessType] = useState('');
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
 
   useEffect(() => {
     if (!user) {
