@@ -1,14 +1,25 @@
 {
-    "version": 2,
-    "builds": [
-      {
-        "src": "server/server.js",
-        "use": "@vercel/node"
+  "version": 2,
+  "builds": [
+    {
+      "src": "server/server.js",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "server/config/**",
+          "server/controllers/**",
+          "server/middleware/**",
+          "server/models/**",
+          "server/routes/**",
+          "server/uploads/**"
+        ]
       }
-    ],
-    "routes": [
-      { "src": "/uploads/(.*)", "dest": "/uploads/$1" },
-      { "src": "/(.*)", "dest": "server/server.js" }
-    ]
-  }
-  
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "server/server.js"
+    }
+  ]
+}
